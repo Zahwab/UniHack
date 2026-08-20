@@ -1,1 +1,1 @@
-python -m venv .venv; .\.venv\Scripts\Activate.ps1; pip install -r requirements.txt
+python -m venv .venv && call .\.venv\Scripts\activate.bat && pip install -r requirements.txt
