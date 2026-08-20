@@ -34,6 +34,11 @@ except ImportError as e:
     st.error(f"❌ Failed to import engine.py: {e}")
     st.stop()
 
+try:
+    from mock_data import HACKATHON_DEMO_CASES
+except ImportError:
+    HACKATHON_DEMO_CASES = None
+
 # ═══════════════════════════════════════════════════════════════════════════════
 #  PAGE CONFIG & GLOBAL STYLES
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -383,9 +388,19 @@ with st.sidebar:
     st.divider()
     st.markdown("### ⚙️ Pipeline Configuration")
 
+    demo_opts = {"DEFAULT_DEMO": "Original Demo (ABB M3AA 75kW)"}
+    if HACKATHON_DEMO_CASES:
+        demo_opts.update({k: f"{k} ({v['asset_name']})" for k, v in HACKATHON_DEMO_CASES.items()})
+
+    selected_demo_key = st.selectbox(
+        "🎭 Select Demo Case",
+        options=list(demo_opts.keys()),
+        format_func=lambda x: demo_opts[x]
+    )
+
     mode = st.radio(
         "Data Source",
-        ["🎭 Live Demo (ABB M3AA 75kW)", "✍️ Manual Input"],
+        ["🎭 Live Demo", "✍️ Manual Input"],
         index=0,
     )
 
@@ -416,11 +431,50 @@ with st.sidebar:
 if run_btn:
     with st.spinner("🔬 Running 4-pass Forensic Pipeline..."):
         if "Demo" in mode:
-            store, demo_kwargs = build_demo_store()
-            product_id = "MTR-ABB-M3AA-75KW"
-            elec_params = demo_kwargs["elec_params"]
-            ip_check    = demo_kwargs["ip_rating"]
-            cool_check  = demo_kwargs["cooling_method"]
+            if selected_demo_key == "DEFAULT_DEMO" or not HACKATHON_DEMO_CASES:
+                store, demo_kwargs = build_demo_store()
+                product_id = "MTR-ABB-M3AA-75KW"
+                elec_params = demo_kwargs["elec_params"]
+                ip_check    = demo_kwargs["ip_rating"]
+                cool_check  = demo_kwargs["cooling_method"]
+            else:
+                case_data = HACKATHON_DEMO_CASES[selected_demo_key]
+                store = EvidenceGraphStore()
+                product_id = selected_demo_key
+                from datetime import datetime
+                
+                context_map = {
+                    "Datasheet": SourceType.PDF_MANUAL,
+                    "Installation Manual": SourceType.PDF_MANUAL,
+                    "Marketing Web Portal": SourceType.LEGACY_SCRAPE,
+                    "Legacy Database": SourceType.ERP_API,
+                }
+                
+                for claim in case_data["ingested_claims"]:
+                    store.ingest_claim(
+                        product_id=product_id,
+                        property_path=claim["field_path"],
+                        raw_value=claim["raw_value"],
+                        normalized_value=claim.get("normalized_value", 0.0),
+                        normalized_unit=claim.get("normalized_unit", "unit"),
+                        source_type=context_map.get(claim["source"]["context_type"], SourceType.USER_OVERRIDE),
+                        source_id=claim["source"]["document_name"],
+                        source_confidence=claim["source"]["extraction_confidence"],
+                        extraction_method="mock_data",
+                        timestamp=datetime.now(timezone.utc),
+                    )
+                
+                if selected_demo_key == "CASE-001_MOTOR":
+                    elec_params = {
+                        "p_out_kw": 75.0, "voltage_v": 415.0, "current_a": 130.0,
+                        "power_factor": 0.87, "efficiency": 0.955
+                    }
+                    ip_check = None
+                    cool_check = None
+                else:
+                    elec_params = None
+                    ip_check = "IP99-X"
+                    cool_check = "TEFC"
         else:
             store      = EvidenceGraphStore()
             product_id = "MANUAL-PRODUCT-001"
@@ -441,12 +495,15 @@ if run_btn:
             cool_check = cooling
 
         pipeline = ForensicAgentPipeline(store)
-        result = pipeline.run(
-            product_id=product_id,
-            elec_params={**elec_params, "tolerance": tolerance} if "tolerance" not in elec_params else elec_params,
-            ip_rating=ip_check,
-            cooling_method=cool_check,
-        )
+        run_kwargs = {
+            "product_id": product_id,
+            "ip_rating": ip_check,
+            "cooling_method": cool_check,
+        }
+        if elec_params:
+            run_kwargs["elec_params"] = {**elec_params, "tolerance": tolerance} if "tolerance" not in elec_params else elec_params
+            
+        result = pipeline.run(**run_kwargs)
 
     st.session_state.pipeline_result = result
     st.session_state.run_complete    = True
