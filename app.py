@@ -50,32 +50,83 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.markdown("""
-<style>\n:root {
-    --bg-base:      #100e0c;
-    --bg-panel:     #161210;
-    --bg-card:      #1e1a17;
-    --bg-inset:     #252019;
-    --bg-popover:   #1a1612;
-    --accent-fire:  #e85d04;
-    --accent-teal:  #00b4d8;
-    --accent-gold:  #f4a261;
-    --accent-green: #52b788;
-    --accent-red:   #e63946;
-    --border-main:  #3d3530;
-    --text-primary: #d4cfc9;
-    --text-muted:   #7a6f68;
-    --text-dim:     #4a4038;
-}
+# ── Determine theme BEFORE CSS injection ──
+_params = st.query_params
+_is_dark = _params.get("theme", "dark") != "light"
+
+# ── Theme color palettes ──
+if _is_dark:
+    C_BG_BASE      = "#100e0c"
+    C_BG_PANEL     = "#161210"
+    C_BG_CARD      = "#1e1a17"
+    C_BG_INSET     = "#252019"
+    C_BG_POPOVER   = "#1a1612"
+    C_ACCENT_FIRE  = "#e85d04"
+    C_ACCENT_TEAL  = "#00b4d8"
+    C_ACCENT_GOLD  = "#f4a261"
+    C_ACCENT_GREEN = "#52b788"
+    C_ACCENT_RED   = "#e63946"
+    C_BORDER       = "#3d3530"
+    C_TEXT_PRIMARY  = "#d4cfc9"
+    C_TEXT_MUTED    = "#7a6f68"
+    C_TEXT_DIM      = "#4a4038"
+    C_SIDEBAR_BG   = "#141210"
+    C_SIDEBAR_CARD = "#1e1a17"
+    C_HERO_GRAD    = "linear-gradient(118deg, #1f1a16 0%, #130f0b 55%, #1a1410 100%)"
+    C_GRID_ALPHA   = "0.022"
+    C_TRUTH_VAL    = "#52b788"
+    C_CODE_BG      = "#252019"
+    C_CODE_FG      = "#00b4d8"
+    C_HOVER_BG     = "#252019"
+else:
+    C_BG_BASE      = "#f5f0eb"
+    C_BG_PANEL     = "#ede7df"
+    C_BG_CARD      = "#fff8f2"
+    C_BG_INSET     = "#e8e0d6"
+    C_BG_POPOVER   = "#fff8f2"
+    C_ACCENT_FIRE  = "#c44b02"
+    C_ACCENT_TEAL  = "#0077a8"
+    C_ACCENT_GOLD  = "#b5541a"
+    C_ACCENT_GREEN = "#2d6a4f"
+    C_ACCENT_RED   = "#b5202c"
+    C_BORDER       = "#c9bfb5"
+    C_TEXT_PRIMARY  = "#1a1410"
+    C_TEXT_MUTED    = "#6b5d52"
+    C_TEXT_DIM      = "#9c8b80"
+    C_SIDEBAR_BG   = "#ede7df"
+    C_SIDEBAR_CARD = "#fff8f2"
+    C_HERO_GRAD    = "linear-gradient(118deg, #fffaf5 0%, #f5ede3 55%, #fdf6ef 100%)"
+    C_GRID_ALPHA   = "0.04"
+    C_TRUTH_VAL    = "#2d6a4f"
+    C_CODE_BG      = "#e8e0d6"
+    C_CODE_FG      = "#0077a8"
+    C_HOVER_BG     = "#e8e0d6"
+
+st.markdown(f"""
+<style>
+:root {{
+    --bg-base:      {C_BG_BASE};
+    --bg-panel:     {C_BG_PANEL};
+    --bg-card:      {C_BG_CARD};
+    --bg-inset:     {C_BG_INSET};
+    --bg-popover:   {C_BG_POPOVER};
+    --accent-fire:  {C_ACCENT_FIRE};
+    --accent-teal:  {C_ACCENT_TEAL};
+    --accent-gold:  {C_ACCENT_GOLD};
+    --accent-green: {C_ACCENT_GREEN};
+    --accent-red:   {C_ACCENT_RED};
+    --border-main:  {C_BORDER};
+    --text-primary: {C_TEXT_PRIMARY};
+    --text-muted:   {C_TEXT_MUTED};
+    --text-dim:     {C_TEXT_DIM};
+}}
 
 /* ═══════════════════════════════════════════════════════════
-   FORENSIC DATA AGENT — Industrial Terminal (v3 Nuclear Dark)
-   All values hardcoded. No CSS var dependencies on Streamlit
-   containers. Tested on Streamlit 1.62.0 / Python 3.14.
+   FORENSIC DATA AGENT — Industrial Terminal (Theme-Aware)
    ═══════════════════════════════════════════════════════════ */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Syne:wght@700;800&family=Barlow:wght@300;400;500;600&display=swap');
 
-/* ═══ 1. NUKE STREAMLIT BASE — force dark on EVERY container ═══ */
+/* ═══ 1. BASE — force theme on EVERY container ═══ */
 html, body,
 .stApp,
 [data-testid="stAppViewContainer"],
@@ -87,153 +138,157 @@ html, body,
 .main .block-container,
 .main,
 section.main,
-div.block-container,
+div.block-container {{
+    background-color: {C_BG_BASE} !important;
+    color: {C_TEXT_PRIMARY} !important;
+    font-family: 'Barlow', sans-serif !important;
+}}
 .element-container,
 .stMarkdown,
-[data-testid="stMarkdownContainer"] {
-    background-color: var(--bg-base) !important;
-    color: var(--text-primary) !important;
+[data-testid="stMarkdownContainer"] {{
+    background-color: transparent !important;
+    color: {C_TEXT_PRIMARY} !important;
     font-family: 'Barlow', sans-serif !important;
-}
+}}
 
 /* Streamlit top decoration bar */
-[data-testid="stDecoration"] { display: none !important; }
-header[data-testid="stHeader"] {
-    background: var(--bg-base) !important;
-    border-bottom: 1px solid var(--border-main) !important;
-}
-[data-testid="stToolbar"] {
-    background: var(--bg-base) !important;
-}
-[data-testid="stToolbar"] button {
-    color: var(--text-muted) !important;
-}
+[data-testid="stDecoration"] {{ display: none !important; }}
+header[data-testid="stHeader"] {{
+    background: {C_BG_BASE} !important;
+    border-bottom: 1px solid {C_BORDER} !important;
+}}
+[data-testid="stToolbar"] {{
+    background: {C_BG_BASE} !important;
+}}
+[data-testid="stToolbar"] button {{
+    color: {C_TEXT_MUTED} !important;
+}}
 
 /* ═══ 2. CIRCUIT GRID BACKGROUND ═══ */
 [data-testid="stMain"]::before,
-.main::before {
+.main::before {{
     content: '';
     position: fixed;
     inset: 0;
     background-image:
-        linear-gradient(rgba(232,93,4,0.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(232,93,4,0.022) 1px, transparent 1px);
+        linear-gradient(rgba(232,93,4,{C_GRID_ALPHA}) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,93,4,{C_GRID_ALPHA}) 1px, transparent 1px);
     background-size: 52px 52px;
     pointer-events: none;
     z-index: 0;
-}
+}}
 
-/* ═══ 3. SIDEBAR — always dark ═══ */
+/* ═══ 3. SIDEBAR ═══ */
 section[data-testid="stSidebar"],
-section[data-testid="stSidebar"] * {
-    --background-color: #141210 !important;
-    --secondary-background-color: #1e1a17 !important;
-    --text-color: #d4cfc9 !important;
-    --primary-color: #e85d04 !important;
-}
+section[data-testid="stSidebar"] * {{
+    --background-color: {C_SIDEBAR_BG} !important;
+    --secondary-background-color: {C_SIDEBAR_CARD} !important;
+    --text-color: {C_TEXT_PRIMARY} !important;
+    --primary-color: {C_ACCENT_FIRE} !important;
+}}
 section[data-testid="stSidebar"],
 section[data-testid="stSidebar"] > div,
 section[data-testid="stSidebar"] > div > div,
-section[data-testid="stSidebar"] .stMarkdown {
-    background: #141210 !important;
-    background-color: #141210 !important;
-    border-right: 1px solid #3d3530 !important;
-}
-section[data-testid="stSidebar"] *:not(.hero-badge):not(button) {
-    color: #d4cfc9 !important;
-}
-section[data-testid="stSidebar"] .stMarkdown h3 {
+section[data-testid="stSidebar"] .stMarkdown {{
+    background: {C_SIDEBAR_BG} !important;
+    background-color: {C_SIDEBAR_BG} !important;
+    border-right: 1px solid {C_BORDER} !important;
+}}
+section[data-testid="stSidebar"] *:not(.hero-badge):not(button) {{
+    color: {C_TEXT_PRIMARY} !important;
+}}
+section[data-testid="stSidebar"] .stMarkdown h3 {{
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.68rem !important;
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
-    color: #7a6f68 !important;
-    border-bottom: 1px solid #3d3530 !important;
+    color: {C_TEXT_MUTED} !important;
+    border-bottom: 1px solid {C_BORDER} !important;
     padding-bottom: 6px !important;
-}
-section[data-testid="stSidebar"] hr {
-    border-color: #3d3530 !important;
+}}
+section[data-testid="stSidebar"] hr {{
+    border-color: {C_BORDER} !important;
     opacity: 0.5;
-}
+}}
 
 /* ═══ 4. SIDEBAR WIDGETS ═══ */
 /* Inputs */
 section[data-testid="stSidebar"] input,
 section[data-testid="stSidebar"] div[data-baseweb="input"],
-section[data-testid="stSidebar"] div[data-baseweb="input"] > div {
-    background: #1e1a17 !important;
-    background-color: #1e1a17 !important;
-    border-color: #3d3530 !important;
-    color: #d4cfc9 !important;
-}
+section[data-testid="stSidebar"] div[data-baseweb="input"] > div {{
+    background: {C_SIDEBAR_CARD} !important;
+    background-color: {C_SIDEBAR_CARD} !important;
+    border-color: {C_BORDER} !important;
+    color: {C_TEXT_PRIMARY} !important;
+}}
 section[data-testid="stSidebar"] input:focus,
-section[data-testid="stSidebar"] div[data-baseweb="input"]:focus-within {
-    border-color: #e85d04 !important;
+section[data-testid="stSidebar"] div[data-baseweb="input"]:focus-within {{
+    border-color: {C_ACCENT_FIRE} !important;
     box-shadow: 0 0 0 2px rgba(232,93,4,0.15) !important;
-}
+}}
 /* Selectbox */
 section[data-testid="stSidebar"] [data-baseweb="select"] > div,
-section[data-testid="stSidebar"] [data-baseweb="select"] > div > div {
-    background: #1e1a17 !important;
-    background-color: #1e1a17 !important;
-    border-color: #3d3530 !important;
-    color: #d4cfc9 !important;
-}
+section[data-testid="stSidebar"] [data-baseweb="select"] > div > div {{
+    background: {C_SIDEBAR_CARD} !important;
+    background-color: {C_SIDEBAR_CARD} !important;
+    border-color: {C_BORDER} !important;
+    color: {C_TEXT_PRIMARY} !important;
+}}
 section[data-testid="stSidebar"] [data-baseweb="select"] span,
-section[data-testid="stSidebar"] [data-baseweb="select"] [role="combobox"] {
-    color: #d4cfc9 !important;
+section[data-testid="stSidebar"] [data-baseweb="select"] [role="combobox"] {{
+    color: {C_TEXT_PRIMARY} !important;
     background: transparent !important;
     background-color: transparent !important;
-}
-/* Dropdown popup (renders outside sidebar, but just in case) */
+}}
+/* Dropdown popup */
 [data-baseweb="popover"] > div,
 [data-baseweb="menu"],
 [role="listbox"],
-[data-baseweb="popover"] [role="option"] {
-    background: #1a1612 !important;
-    background-color: #1a1612 !important;
-    border-color: #3d3530 !important;
-    color: #d4cfc9 !important;
-}
+[data-baseweb="popover"] [role="option"] {{
+    background: {C_BG_POPOVER} !important;
+    background-color: {C_BG_POPOVER} !important;
+    border-color: {C_BORDER} !important;
+    color: {C_TEXT_PRIMARY} !important;
+}}
 [data-baseweb="popover"] [role="option"]:hover,
-[aria-selected="true"] {
-    background: #252019 !important;
-    background-color: #252019 !important;
-    color: #e85d04 !important;
-}
+[aria-selected="true"] {{
+    background: {C_HOVER_BG} !important;
+    background-color: {C_HOVER_BG} !important;
+    color: {C_ACCENT_FIRE} !important;
+}}
 /* Slider */
-section[data-testid="stSidebar"] [data-testid="stSlider"] [role="slider"] {
-    background: #e85d04 !important;
-    background-color: #e85d04 !important;
-    border-color: #e85d04 !important;
-}
-section[data-testid="stSidebar"] [data-testid="stSlider"] [data-baseweb="slider"] div[class*="SliderBar"] {
-    background: #e85d04 !important;
-    background-color: #e85d04 !important;
-}
+section[data-testid="stSidebar"] [data-testid="stSlider"] [role="slider"] {{
+    background: {C_ACCENT_FIRE} !important;
+    background-color: {C_ACCENT_FIRE} !important;
+    border-color: {C_ACCENT_FIRE} !important;
+}}
+section[data-testid="stSidebar"] [data-testid="stSlider"] [data-baseweb="slider"] div[class*="SliderBar"] {{
+    background: {C_ACCENT_FIRE} !important;
+    background-color: {C_ACCENT_FIRE} !important;
+}}
 /* Radio */
 section[data-testid="stSidebar"] [data-testid="stRadio"] label,
-section[data-testid="stSidebar"] [data-testid="stRadio"] p {
-    color: #d4cfc9 !important;
-}
-section[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radio"] {
-    background: #1e1a17 !important;
-    background-color: #1e1a17 !important;
-    border-color: #3d3530 !important;
-}
+section[data-testid="stSidebar"] [data-testid="stRadio"] p {{
+    color: {C_TEXT_PRIMARY} !important;
+}}
+section[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radio"] {{
+    background: {C_SIDEBAR_CARD} !important;
+    background-color: {C_SIDEBAR_CARD} !important;
+    border-color: {C_BORDER} !important;
+}}
 /* Number input buttons */
 section[data-testid="stSidebar"] button[data-testid="stNumberInputStepDown"],
-section[data-testid="stSidebar"] button[data-testid="stNumberInputStepUp"] {
-    background: #252019 !important;
-    background-color: #252019 !important;
-    border-color: #3d3530 !important;
-    color: #7a6f68 !important;
-}
+section[data-testid="stSidebar"] button[data-testid="stNumberInputStepUp"] {{
+    background: {C_HOVER_BG} !important;
+    background-color: {C_HOVER_BG} !important;
+    border-color: {C_BORDER} !important;
+    color: {C_TEXT_MUTED} !important;
+}}
 /* Sidebar run button */
-section[data-testid="stSidebar"] .stButton > button {
+section[data-testid="stSidebar"] .stButton > button {{
     background: transparent !important;
-    color: #e85d04 !important;
-    border: 1px solid #e85d04 !important;
+    color: {C_ACCENT_FIRE} !important;
+    border: 1px solid {C_ACCENT_FIRE} !important;
     border-radius: 2px !important;
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.78rem !important;
@@ -243,37 +298,37 @@ section[data-testid="stSidebar"] .stButton > button {
     transition: all 0.15s !important;
     padding: 10px 14px !important;
     width: 100% !important;
-}
-section[data-testid="stSidebar"] .stButton > button:hover {
-    background: #e85d04 !important;
+}}
+section[data-testid="stSidebar"] .stButton > button:hover {{
+    background: {C_ACCENT_FIRE} !important;
     color: #fff !important;
     box-shadow: 0 0 18px rgba(232,93,4,0.35) !important;
-}
+}}
 /* Theme toggle button (different style) */
-section[data-testid="stSidebar"] .stButton:first-child > button {
-    border-color: #3d3530 !important;
-    color: #7a6f68 !important;
+section[data-testid="stSidebar"] .stButton:first-child > button {{
+    border-color: {C_BORDER} !important;
+    color: {C_TEXT_MUTED} !important;
     font-size: 0.7rem !important;
     padding: 5px 10px !important;
     margin-bottom: 4px !important;
-}
-section[data-testid="stSidebar"] .stButton:first-child > button:hover {
-    background: #252019 !important;
-    color: #d4cfc9 !important;
-}
+}}
+section[data-testid="stSidebar"] .stButton:first-child > button:hover {{
+    background: {C_HOVER_BG} !important;
+    color: {C_TEXT_PRIMARY} !important;
+}}
 
 /* ═══ 5. HERO BANNER ═══ */
-.hero-banner {
-    background: linear-gradient(118deg, #1f1a16 0%, #130f0b 55%, #1a1410 100%) !important;
-    border: 1px solid #3d3530;
-    border-top: 3px solid #e85d04;
+.hero-banner {{
+    background: {C_HERO_GRAD} !important;
+    border: 1px solid {C_BORDER};
+    border-top: 3px solid {C_ACCENT_FIRE};
     border-radius: 3px;
     padding: 38px 46px;
     margin-bottom: 28px;
     position: relative;
     overflow: hidden;
-}
-.hero-banner::before {
+}}
+.hero-banner::before {{
     content: '';
     position: absolute;
     top: 0; left: -60%;
@@ -281,8 +336,8 @@ section[data-testid="stSidebar"] .stButton:first-child > button:hover {
     background: linear-gradient(90deg, transparent, rgba(232,93,4,0.035), transparent);
     animation: scanline 4.5s ease-in-out infinite;
     pointer-events: none;
-}
-.hero-banner::after {
+}}
+.hero-banner::after {{
     content: '';
     position: absolute;
     inset: 0;
@@ -290,46 +345,46 @@ section[data-testid="stSidebar"] .stButton:first-child > button:hover {
         radial-gradient(ellipse 55% 80% at 88% 50%, rgba(232,93,4,0.065) 0%, transparent 65%),
         radial-gradient(ellipse 35% 60% at 10% 50%, rgba(0,180,216,0.04) 0%, transparent 60%);
     pointer-events: none;
-}
-@keyframes scanline {
-    0%   { left: -60%; }
-    100% { left: 115%; }
-}
-.hero-eyebrow {
+}}
+@keyframes scanline {{
+    0%   {{ left: -60%; }}
+    100% {{ left: 115%; }}
+}}
+.hero-eyebrow {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.65rem;
     font-weight: 500;
     letter-spacing: 0.2em;
-    color: #e85d04;
+    color: {C_ACCENT_FIRE};
     text-transform: uppercase;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
     gap: 12px;
-}
-.hero-eyebrow::before, .hero-eyebrow::after {
+}}
+.hero-eyebrow::before, .hero-eyebrow::after {{
     content: '';
     display: inline-block;
     height: 1px;
     width: 28px;
-    background: #e85d04;
+    background: {C_ACCENT_FIRE};
     opacity: 0.5;
-}
-.hero-title {
+}}
+.hero-title {{
     font-family: 'Syne', 'IBM Plex Mono', sans-serif;
     font-size: 2.8rem;
     font-weight: 800;
-    color: #d4cfc9;
+    color: {C_TEXT_PRIMARY};
     letter-spacing: -1.5px;
     line-height: 1.05;
     margin: 0 0 14px 0;
     display: block;
-}
-.hero-title-fire {
-    color: #e85d04;
+}}
+.hero-title-fire {{
+    color: {C_ACCENT_FIRE};
     display: inline;
-}
-.hero-badge {
+}}
+.hero-badge {{
     display: inline-flex;
     align-items: center;
     gap: 7px;
@@ -339,58 +394,58 @@ section[data-testid="stSidebar"] .stButton:first-child > button:hover {
     padding: 5px 14px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.65rem;
-    color: #e85d04;
+    color: {C_ACCENT_FIRE};
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     margin-bottom: 18px;
     position: relative;
     z-index: 1;
-}
-.hero-thesis {
+}}
+.hero-thesis {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.88rem;
-    color: #7a6f68;
+    color: {C_TEXT_MUTED};
     margin: 0;
     line-height: 1.65;
     max-width: 660px;
     position: relative;
     z-index: 1;
-}
-.hero-thesis em {
-    color: #f4a261;
+}}
+.hero-thesis em {{
+    color: {C_ACCENT_GOLD};
     font-style: normal;
     font-weight: 500;
-}
+}}
 
 /* ═══ 6. METRIC TILES ═══ */
-.metric-tile {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-main);
+.metric-tile {{
+    background: {C_BG_PANEL};
+    border: 1px solid {C_BORDER};
     border-top: 2px solid rgba(232,93,4,0.5);
     border-radius: 2px;
     padding: 20px 16px;
     text-align: center;
-}
-.metric-number {
+}}
+.metric-number {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 2.4rem;
     font-weight: 600;
-    color: #e85d04;
+    color: {C_ACCENT_FIRE};
     line-height: 1;
     letter-spacing: -1px;
-}
-.metric-label {
+}}
+.metric-label {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.62rem;
-    color: var(--text-muted);
+    color: {C_TEXT_MUTED};
     margin-top: 7px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-}
+}}
 
 /* ═══ 7. SECTION HEADERS ═══ */
-.section-header {
+.section-header {{
     display: flex;
     align-items: center;
     gap: 10px;
@@ -402,60 +457,60 @@ section[data-testid="stSidebar"] .stButton:first-child > button:hover {
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-}
-.section-evidence {
+}}
+.section-evidence {{
     background: rgba(230,57,70,0.07);
     border: 1px solid rgba(230,57,70,0.2);
-    border-left: 3px solid #e63946;
-    color: var(--accent-red);
-}
-.section-truth {
+    border-left: 3px solid {C_ACCENT_RED};
+    color: {C_ACCENT_RED};
+}}
+.section-truth {{
     background: rgba(82,183,136,0.07);
     border: 1px solid rgba(82,183,136,0.2);
-    border-left: 3px solid #52b788;
-    color: var(--accent-green);
-}
+    border-left: 3px solid {C_ACCENT_GREEN};
+    color: {C_ACCENT_GREEN};
+}}
 
 /* ═══ 8. CLAIM CARDS ═══ */
-.claim-card {
-    background: var(--bg-card);
+.claim-card {{
+    background: {C_BG_CARD};
     border-radius: 2px;
     padding: 14px 16px;
     margin-bottom: 8px;
-    border: 1px solid var(--border-main);
-    border-left: 3px solid var(--border-main);
-}
-.claim-card.pdf_manual    { border-left-color: #7b68ee; }
-.claim-card.catalog_table { border-left-color: #00b4d8; }
-.claim-card.legacy_scrape { border-left-color: #f4a261; }
-.claim-card.erp_api       { border-left-color: #52b788; }
-.claim-card.winner {
-    border-left-color: #e85d04;
-    background: linear-gradient(90deg, rgba(232,93,4,0.08) 0%, var(--bg-card) 45%);
-}
-.claim-value {
+    border: 1px solid {C_BORDER};
+    border-left: 3px solid {C_BORDER};
+}}
+.claim-card.pdf_manual    {{ border-left-color: #7b68ee; }}
+.claim-card.catalog_table {{ border-left-color: #00b4d8; }}
+.claim-card.legacy_scrape {{ border-left-color: #f4a261; }}
+.claim-card.erp_api       {{ border-left-color: #52b788; }}
+.claim-card.winner {{
+    border-left-color: {C_ACCENT_FIRE};
+    background: linear-gradient(90deg, rgba(232,93,4,0.08) 0%, {C_BG_CARD} 45%);
+}}
+.claim-value {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 1.12rem;
-    color: var(--text-primary);
+    color: {C_TEXT_PRIMARY};
     font-weight: 500;
     letter-spacing: -0.3px;
-}
-.claim-source {
+}}
+.claim-source {{
     font-size: 0.74rem;
-    color: var(--text-muted);
+    color: {C_TEXT_MUTED};
     margin-top: 5px;
     line-height: 1.55;
     font-family: 'Barlow', sans-serif;
-}
-.claim-id {
+}}
+.claim-id {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.62rem;
-    color: var(--text-dim);
+    color: {C_TEXT_DIM};
     margin-top: 4px;
-}
+}}
 
 /* ═══ 9. SCORE PILLS ═══ */
-.score-pill {
+.score-pill {{
     display: inline-block;
     padding: 2px 8px;
     border-radius: 2px;
@@ -463,265 +518,265 @@ section[data-testid="stSidebar"] .stButton:first-child > button:hover {
     font-weight: 600;
     font-family: 'IBM Plex Mono', monospace;
     letter-spacing: 0.04em;
-}
-.score-high { background: rgba(82,183,136,0.12);  color: var(--accent-green); border: 1px solid rgba(82,183,136,0.28); }
-.score-mid  { background: rgba(0,180,216,0.12);    color: var(--accent-teal); border: 1px solid rgba(0,180,216,0.28); }
-.score-low  { background: rgba(230,57,70,0.10);    color: var(--accent-red); border: 1px solid rgba(230,57,70,0.28); }
+}}
+.score-high {{ background: rgba(82,183,136,0.12);  color: {C_ACCENT_GREEN}; border: 1px solid rgba(82,183,136,0.28); }}
+.score-mid  {{ background: rgba(0,180,216,0.12);    color: {C_ACCENT_TEAL}; border: 1px solid rgba(0,180,216,0.28); }}
+.score-low  {{ background: rgba(230,57,70,0.10);    color: {C_ACCENT_RED}; border: 1px solid rgba(230,57,70,0.28); }}
 
 /* ═══ 10. ANOMALY BOXES ═══ */
-.anomaly-critical {
+.anomaly-critical {{
     background: rgba(230,57,70,0.07);
     border: 1px solid rgba(230,57,70,0.28);
-    border-left: 4px solid #e63946;
+    border-left: 4px solid {C_ACCENT_RED};
     border-radius: 2px;
     padding: 16px 18px;
     margin-bottom: 12px;
-}
-.anomaly-warning {
+}}
+.anomaly-warning {{
     background: rgba(244,162,97,0.07);
     border: 1px solid rgba(244,162,97,0.28);
-    border-left: 4px solid #f4a261;
+    border-left: 4px solid {C_ACCENT_GOLD};
     border-radius: 2px;
     padding: 16px 18px;
     margin-bottom: 12px;
-}
-.anomaly-title {
+}}
+.anomaly-title {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.76rem;
     font-weight: 600;
     letter-spacing: 0.08em;
-    color: var(--accent-red);
+    color: {C_ACCENT_RED};
     margin-bottom: 8px;
     text-transform: uppercase;
-}
-.anomaly-warning .anomaly-title { color: #f4a261; }
-.anomaly-desc { font-size: 0.82rem; color: var(--text-primary); line-height: 1.6; }
-.anomaly-hint { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; }
+}}
+.anomaly-warning .anomaly-title {{ color: {C_ACCENT_GOLD}; }}
+.anomaly-desc {{ font-size: 0.82rem; color: {C_TEXT_PRIMARY}; line-height: 1.6; }}
+.anomaly-hint {{ font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: {C_TEXT_MUTED}; margin-top: 10px; }}
 
 /* ═══ 11. TRUTH CARDS ═══ */
-.truth-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-main);
+.truth-card {{
+    background: {C_BG_CARD};
+    border: 1px solid {C_BORDER};
     border-bottom: 2px solid rgba(82,183,136,0.4);
     border-radius: 2px;
     padding: 18px 20px;
     margin-bottom: 12px;
-}
-.truth-property {
+}}
+.truth-property {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.68rem;
-    color: var(--text-muted);
+    color: {C_TEXT_MUTED};
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 6px;
-}
-.truth-value {
+}}
+.truth-value {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 1.9rem;
     font-weight: 600;
-    color: #52b788;
+    color: {C_TRUTH_VAL};
     letter-spacing: -1px;
     line-height: 1;
-}
-.truth-confidence {
+}}
+.truth-confidence {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.7rem;
-    color: var(--text-muted);
+    color: {C_TEXT_MUTED};
     margin-top: 8px;
-}
+}}
 
 /* ═══ 12. REJECTION LOG ═══ */
-.rejection-entry {
+.rejection-entry {{
     background: rgba(230,57,70,0.04);
     border-left: 2px solid rgba(230,57,70,0.28);
     padding: 7px 12px;
     margin-bottom: 5px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.66rem;
-    color: var(--text-muted);
+    color: {C_TEXT_MUTED};
     line-height: 1.5;
-}
+}}
 
 /* ═══ 13. EXPANDER — all states ═══ */
 [data-testid="stExpander"],
-div[data-testid="stExpander"] {
-    background: var(--bg-card) !important;
-    border: 1px solid var(--border-main) !important;
+div[data-testid="stExpander"] {{
+    background: {C_BG_CARD} !important;
+    border: 1px solid {C_BORDER} !important;
     border-radius: 2px !important;
     overflow: hidden !important;
-}
+}}
 [data-testid="stExpander"] summary,
 [data-testid="stExpander"] details summary,
-div[data-testid="stExpander"] summary {
-    background: var(--bg-card) !important;
-    color: var(--text-primary) !important;
+div[data-testid="stExpander"] summary {{
+    background: {C_BG_CARD} !important;
+    color: {C_TEXT_PRIMARY} !important;
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.8rem !important;
     padding: 11px 14px !important;
     border-radius: 0 !important;
-}
+}}
 [data-testid="stExpander"] details[open] > summary,
-div[data-testid="stExpander"] details[open] summary {
-    background: var(--bg-inset) !important;
-    border-bottom: 1px solid var(--border-main) !important;
-}
+div[data-testid="stExpander"] details[open] summary {{
+    background: {C_BG_INSET} !important;
+    border-bottom: 1px solid {C_BORDER} !important;
+}}
 [data-testid="stExpander"] summary p,
-[data-testid="stExpander"] summary span {
-    color: var(--text-primary) !important;
+[data-testid="stExpander"] summary span {{
+    color: {C_TEXT_PRIMARY} !important;
     background: transparent !important;
     font-family: 'IBM Plex Mono', monospace !important;
-}
+}}
 /* Inner content div */
 [data-testid="stExpander"] details > div,
-div[data-testid="stExpander"] > details > div {
-    background: var(--bg-card) !important;
+div[data-testid="stExpander"] > details > div {{
+    background: {C_BG_CARD} !important;
     padding: 12px !important;
-}
+}}
 
 /* ═══ 14. NATIVE ALERT BOXES ═══ */
 [data-testid="stAlert"],
 div[role="alert"],
-div[data-baseweb="notification"] {
-    background: var(--bg-card) !important;
+div[data-baseweb="notification"] {{
+    background: {C_BG_CARD} !important;
     border-radius: 2px !important;
-    color: var(--text-primary) !important;
+    color: {C_TEXT_PRIMARY} !important;
     font-family: 'Barlow', sans-serif !important;
-}
+}}
 /* Info */
 [data-testid="stAlert"][data-type="info"],
-.stInfo > div {
-    border-left: 3px solid #00b4d8 !important;
+.stInfo > div {{
+    border-left: 3px solid {C_ACCENT_TEAL} !important;
     background: rgba(0,180,216,0.07) !important;
-}
+}}
 /* Warning */
 [data-testid="stAlert"][data-type="warning"],
-.stWarning > div {
-    border-left: 3px solid #f4a261 !important;
+.stWarning > div {{
+    border-left: 3px solid {C_ACCENT_GOLD} !important;
     background: rgba(244,162,97,0.07) !important;
-}
+}}
 /* Success */
 [data-testid="stAlert"][data-type="success"],
-.stSuccess > div {
-    border-left: 3px solid #52b788 !important;
+.stSuccess > div {{
+    border-left: 3px solid {C_ACCENT_GREEN} !important;
     background: rgba(82,183,136,0.07) !important;
-}
+}}
 /* Error */
 [data-testid="stAlert"][data-type="error"],
-.stError > div {
-    border-left: 3px solid #e63946 !important;
+.stError > div {{
+    border-left: 3px solid {C_ACCENT_RED} !important;
     background: rgba(230,57,70,0.07) !important;
-}
+}}
 [data-testid="stAlert"] p,
 [data-testid="stAlert"] span,
-[data-testid="stAlert"] strong {
-    color: var(--text-primary) !important;
+[data-testid="stAlert"] strong {{
+    color: {C_TEXT_PRIMARY} !important;
     font-family: 'Barlow', sans-serif !important;
-}
+}}
 /* Streamlit 1.62 specific alert wrapper */
-div[data-testid="stCaptionContainer"] {
+div[data-testid="stCaptionContainer"] {{
     background: transparent !important;
-}
-.element-container div[data-stale="false"] div:has(> [data-testid="stAlert"]) {
+}}
+.element-container div[data-stale="false"] div:has(> [data-testid="stAlert"]) {{
     background: transparent !important;
-}
+}}
 
 /* ═══ 15. DATAFRAMES ═══ */
 [data-testid="stDataFrame"] > div,
 [data-testid="stDataFrameResizable"],
-.stDataFrame {
-    background: var(--bg-card) !important;
-    border: 1px solid var(--border-main) !important;
+.stDataFrame {{
+    background: {C_BG_CARD} !important;
+    border: 1px solid {C_BORDER} !important;
     border-radius: 2px !important;
-}
-[data-testid="stDataFrame"] * {
-    color: var(--text-primary) !important;
+}}
+[data-testid="stDataFrame"] * {{
+    color: {C_TEXT_PRIMARY} !important;
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.74rem !important;
-}
+}}
 /* Glide data grid cells */
 .dvn-scroller,
 [role="grid"],
 [role="gridcell"],
-[role="columnheader"] {
-    background: var(--bg-card) !important;
-    border-color: var(--border-main) !important;
-}
-[role="columnheader"] {
-    background: var(--bg-panel) !important;
-    color: var(--text-muted) !important;
+[role="columnheader"] {{
+    background: {C_BG_CARD} !important;
+    border-color: {C_BORDER} !important;
+}}
+[role="columnheader"] {{
+    background: {C_BG_PANEL} !important;
+    color: {C_TEXT_MUTED} !important;
     font-size: 0.68rem !important;
     letter-spacing: 0.08em !important;
     text-transform: uppercase !important;
-    border-bottom: 1px solid var(--border-main) !important;
-}
+    border-bottom: 1px solid {C_BORDER} !important;
+}}
 
 /* ═══ 16. METRICS ═══ */
-[data-testid="stMetric"] {
+[data-testid="stMetric"] {{
     background: transparent !important;
-}
+}}
 [data-testid="stMetric"] label,
-[data-testid="metric-container"] label {
-    color: var(--text-muted) !important;
+[data-testid="metric-container"] label {{
+    color: {C_TEXT_MUTED} !important;
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.68rem !important;
     text-transform: uppercase !important;
     letter-spacing: 0.08em !important;
-}
+}}
 [data-testid="stMetricValue"],
-[data-testid="metric-container"] [data-testid="stMetricValue"] {
-    color: #e85d04 !important;
+[data-testid="metric-container"] [data-testid="stMetricValue"] {{
+    color: {C_ACCENT_FIRE} !important;
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 1.5rem !important;
-}
+}}
 
 /* ═══ 17. MARKDOWN OVERRIDES ═══ */
 .stMarkdown p,
 .stMarkdown li,
 .stMarkdown span:not(.score-pill):not(.hero-title-fire),
 [data-testid="stMarkdownContainer"] p,
-[data-testid="stText"] {
-    color: var(--text-primary) !important;
+[data-testid="stText"] {{
+    color: {C_TEXT_PRIMARY} !important;
     font-family: 'Barlow', sans-serif !important;
-}
+}}
 .stMarkdown code,
-.stMarkdown pre {
-    background: var(--bg-inset) !important;
-    color: #00b4d8 !important;
-    border: 1px solid var(--border-main) !important;
+.stMarkdown pre {{
+    background: {C_CODE_BG} !important;
+    color: {C_CODE_FG} !important;
+    border: 1px solid {C_BORDER} !important;
     border-radius: 2px !important;
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.8rem !important;
     padding: 1px 6px !important;
-}
-.stMarkdown h3 {
+}}
+.stMarkdown h3 {{
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.74rem !important;
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
-    color: var(--text-muted) !important;
-    border-bottom: 1px solid var(--border-main) !important;
+    color: {C_TEXT_MUTED} !important;
+    border-bottom: 1px solid {C_BORDER} !important;
     padding-bottom: 6px !important;
     margin: 20px 0 12px 0 !important;
-}
+}}
 [data-testid="stCaption"] p,
-[data-testid="stCaption"] {
-    color: var(--text-muted) !important;
+[data-testid="stCaption"] {{
+    color: {C_TEXT_MUTED} !important;
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.7rem !important;
-}
+}}
 /* Dividers */
 hr,
 [data-testid="stHorizontalRule"] hr,
-[data-testid="stDivider"] hr {
-    border-color: var(--border-main) !important;
+[data-testid="stDivider"] hr {{
+    border-color: {C_BORDER} !important;
     opacity: 0.6 !important;
-}
+}}
 
 /* ═══ 18. FOOTER ═══ */
-.footer-bar {
+.footer-bar {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.62rem;
-    color: var(--text-dim);
+    color: {C_TEXT_DIM};
     letter-spacing: 0.1em;
     text-transform: uppercase;
     display: flex;
@@ -729,10 +784,11 @@ hr,
     justify-content: center;
     gap: 20px;
     padding: 20px 0 8px 0;
-}
-.footer-bar .fire { color: #e85d04; }
+}}
+.footer-bar .fire {{ color: {C_ACCENT_FIRE}; }}
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
