@@ -1,0 +1,10 @@
+# Forensic Data Agent — Runtime Requirements
+# engine.py has ZERO external dependencies (Python 3.10+ stdlib only)
+# app.py requires the packages below
+
+streamlit>=1.35.0
+pandas>=2.0.0
+
+# Development / optional
+# pydantic>=2.0.0   # Currently incompatible with Python 3.14.0b4 (no pydantic-core wheel)
+#                   # engine.py uses stdlib dataclasses as a fully equivalent replacement
