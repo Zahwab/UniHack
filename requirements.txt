@@ -6,5 +6,4 @@ streamlit>=1.35.0
 pandas>=2.0.0
 
 # Development / optional
-# pydantic>=2.0.0   # Currently incompatible with Python 3.14.0b4 (no pydantic-core wheel)
-#                   # engine.py uses stdlib dataclasses as a fully equivalent replacement
+pydantic>=2.0.0
