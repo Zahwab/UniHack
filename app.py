@@ -51,202 +51,686 @@ st.set_page_config(
 )
 
 st.markdown("""
-<style>
-/* ── Base & Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-    background-color: #0a0e1a;
-    color: #e2e8f0;
+<style>\n:root {
+    --bg-base:      #100e0c;
+    --bg-panel:     #161210;
+    --bg-card:      #1e1a17;
+    --bg-inset:     #252019;
+    --bg-popover:   #1a1612;
+    --accent-fire:  #e85d04;
+    --accent-teal:  #00b4d8;
+    --accent-gold:  #f4a261;
+    --accent-green: #52b788;
+    --accent-red:   #e63946;
+    --border-main:  #3d3530;
+    --text-primary: #d4cfc9;
+    --text-muted:   #7a6f68;
+    --text-dim:     #4a4038;
 }
 
-/* ── Hero banner ── */
+/* ═══════════════════════════════════════════════════════════
+   FORENSIC DATA AGENT — Industrial Terminal (v3 Nuclear Dark)
+   All values hardcoded. No CSS var dependencies on Streamlit
+   containers. Tested on Streamlit 1.62.0 / Python 3.14.
+   ═══════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Syne:wght@700;800&family=Barlow:wght@300;400;500;600&display=swap');
+
+/* ═══ 1. NUKE STREAMLIT BASE — force dark on EVERY container ═══ */
+html, body,
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+[data-testid="stMainBlockContainer"],
+[data-testid="stVerticalBlock"],
+[data-testid="stBottomBlockContainer"],
+[data-testid="stHorizontalBlock"],
+.main .block-container,
+.main,
+section.main,
+div.block-container,
+.element-container,
+.stMarkdown,
+[data-testid="stMarkdownContainer"] {
+    background-color: var(--bg-base) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Barlow', sans-serif !important;
+}
+
+/* Streamlit top decoration bar */
+[data-testid="stDecoration"] { display: none !important; }
+header[data-testid="stHeader"] {
+    background: var(--bg-base) !important;
+    border-bottom: 1px solid var(--border-main) !important;
+}
+[data-testid="stToolbar"] {
+    background: var(--bg-base) !important;
+}
+[data-testid="stToolbar"] button {
+    color: var(--text-muted) !important;
+}
+
+/* ═══ 2. CIRCUIT GRID BACKGROUND ═══ */
+[data-testid="stMain"]::before,
+.main::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(232,93,4,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,93,4,0.022) 1px, transparent 1px);
+    background-size: 52px 52px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ═══ 3. SIDEBAR — always dark ═══ */
+section[data-testid="stSidebar"],
+section[data-testid="stSidebar"] * {
+    --background-color: #141210 !important;
+    --secondary-background-color: #1e1a17 !important;
+    --text-color: #d4cfc9 !important;
+    --primary-color: #e85d04 !important;
+}
+section[data-testid="stSidebar"],
+section[data-testid="stSidebar"] > div,
+section[data-testid="stSidebar"] > div > div,
+section[data-testid="stSidebar"] .stMarkdown {
+    background: #141210 !important;
+    background-color: #141210 !important;
+    border-right: 1px solid #3d3530 !important;
+}
+section[data-testid="stSidebar"] *:not(.hero-badge):not(button) {
+    color: #d4cfc9 !important;
+}
+section[data-testid="stSidebar"] .stMarkdown h3 {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    color: #7a6f68 !important;
+    border-bottom: 1px solid #3d3530 !important;
+    padding-bottom: 6px !important;
+}
+section[data-testid="stSidebar"] hr {
+    border-color: #3d3530 !important;
+    opacity: 0.5;
+}
+
+/* ═══ 4. SIDEBAR WIDGETS ═══ */
+/* Inputs */
+section[data-testid="stSidebar"] input,
+section[data-testid="stSidebar"] div[data-baseweb="input"],
+section[data-testid="stSidebar"] div[data-baseweb="input"] > div {
+    background: #1e1a17 !important;
+    background-color: #1e1a17 !important;
+    border-color: #3d3530 !important;
+    color: #d4cfc9 !important;
+}
+section[data-testid="stSidebar"] input:focus,
+section[data-testid="stSidebar"] div[data-baseweb="input"]:focus-within {
+    border-color: #e85d04 !important;
+    box-shadow: 0 0 0 2px rgba(232,93,4,0.15) !important;
+}
+/* Selectbox */
+section[data-testid="stSidebar"] [data-baseweb="select"] > div,
+section[data-testid="stSidebar"] [data-baseweb="select"] > div > div {
+    background: #1e1a17 !important;
+    background-color: #1e1a17 !important;
+    border-color: #3d3530 !important;
+    color: #d4cfc9 !important;
+}
+section[data-testid="stSidebar"] [data-baseweb="select"] span,
+section[data-testid="stSidebar"] [data-baseweb="select"] [role="combobox"] {
+    color: #d4cfc9 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+}
+/* Dropdown popup (renders outside sidebar, but just in case) */
+[data-baseweb="popover"] > div,
+[data-baseweb="menu"],
+[role="listbox"],
+[data-baseweb="popover"] [role="option"] {
+    background: #1a1612 !important;
+    background-color: #1a1612 !important;
+    border-color: #3d3530 !important;
+    color: #d4cfc9 !important;
+}
+[data-baseweb="popover"] [role="option"]:hover,
+[aria-selected="true"] {
+    background: #252019 !important;
+    background-color: #252019 !important;
+    color: #e85d04 !important;
+}
+/* Slider */
+section[data-testid="stSidebar"] [data-testid="stSlider"] [role="slider"] {
+    background: #e85d04 !important;
+    background-color: #e85d04 !important;
+    border-color: #e85d04 !important;
+}
+section[data-testid="stSidebar"] [data-testid="stSlider"] [data-baseweb="slider"] div[class*="SliderBar"] {
+    background: #e85d04 !important;
+    background-color: #e85d04 !important;
+}
+/* Radio */
+section[data-testid="stSidebar"] [data-testid="stRadio"] label,
+section[data-testid="stSidebar"] [data-testid="stRadio"] p {
+    color: #d4cfc9 !important;
+}
+section[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radio"] {
+    background: #1e1a17 !important;
+    background-color: #1e1a17 !important;
+    border-color: #3d3530 !important;
+}
+/* Number input buttons */
+section[data-testid="stSidebar"] button[data-testid="stNumberInputStepDown"],
+section[data-testid="stSidebar"] button[data-testid="stNumberInputStepUp"] {
+    background: #252019 !important;
+    background-color: #252019 !important;
+    border-color: #3d3530 !important;
+    color: #7a6f68 !important;
+}
+/* Sidebar run button */
+section[data-testid="stSidebar"] .stButton > button {
+    background: transparent !important;
+    color: #e85d04 !important;
+    border: 1px solid #e85d04 !important;
+    border-radius: 2px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    transition: all 0.15s !important;
+    padding: 10px 14px !important;
+    width: 100% !important;
+}
+section[data-testid="stSidebar"] .stButton > button:hover {
+    background: #e85d04 !important;
+    color: #fff !important;
+    box-shadow: 0 0 18px rgba(232,93,4,0.35) !important;
+}
+/* Theme toggle button (different style) */
+section[data-testid="stSidebar"] .stButton:first-child > button {
+    border-color: #3d3530 !important;
+    color: #7a6f68 !important;
+    font-size: 0.7rem !important;
+    padding: 5px 10px !important;
+    margin-bottom: 4px !important;
+}
+section[data-testid="stSidebar"] .stButton:first-child > button:hover {
+    background: #252019 !important;
+    color: #d4cfc9 !important;
+}
+
+/* ═══ 5. HERO BANNER ═══ */
 .hero-banner {
-    background: linear-gradient(135deg, #1a1f35 0%, #0d1226 50%, #12192e 100%);
-    border: 1px solid #2d3654;
-    border-radius: 16px;
-    padding: 32px 40px;
-    margin-bottom: 24px;
+    background: linear-gradient(118deg, #1f1a16 0%, #130f0b 55%, #1a1410 100%) !important;
+    border: 1px solid #3d3530;
+    border-top: 3px solid #e85d04;
+    border-radius: 3px;
+    padding: 38px 46px;
+    margin-bottom: 28px;
     position: relative;
     overflow: hidden;
 }
 .hero-banner::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at 30% 50%, rgba(99,102,241,0.08) 0%, transparent 60%),
-                radial-gradient(circle at 70% 50%, rgba(6,182,212,0.06) 0%, transparent 60%);
+    top: 0; left: -60%;
+    width: 55%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(232,93,4,0.035), transparent);
+    animation: scanline 4.5s ease-in-out infinite;
     pointer-events: none;
 }
-.hero-title {
-    font-size: 2.2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #818cf8 0%, #38bdf8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0 0 8px 0;
-    letter-spacing: -0.5px;
+.hero-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 55% 80% at 88% 50%, rgba(232,93,4,0.065) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 60% at 10% 50%, rgba(0,180,216,0.04) 0%, transparent 60%);
+    pointer-events: none;
 }
-.hero-thesis {
-    font-size: 1.05rem;
-    color: #94a3b8;
-    font-style: italic;
-    margin: 0;
+@keyframes scanline {
+    0%   { left: -60%; }
+    100% { left: 115%; }
+}
+.hero-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: #e85d04;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    display: inline-block;
+    height: 1px;
+    width: 28px;
+    background: #e85d04;
+    opacity: 0.5;
+}
+.hero-title {
+    font-family: 'Syne', 'IBM Plex Mono', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #d4cfc9;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    margin: 0 0 14px 0;
+    display: block;
+}
+.hero-title-fire {
+    color: #e85d04;
+    display: inline;
 }
 .hero-badge {
-    display: inline-block;
-    background: rgba(99,102,241,0.15);
-    border: 1px solid rgba(99,102,241,0.4);
-    border-radius: 20px;
-    padding: 4px 14px;
-    font-size: 0.75rem;
-    color: #818cf8;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(232,93,4,0.1);
+    border: 1px solid rgba(232,93,4,0.32);
+    border-radius: 2px;
+    padding: 5px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: #e85d04;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+}
+.hero-thesis {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.88rem;
+    color: #7a6f68;
+    margin: 0;
+    line-height: 1.65;
+    max-width: 660px;
+    position: relative;
+    z-index: 1;
+}
+.hero-thesis em {
+    color: #f4a261;
+    font-style: normal;
+    font-weight: 500;
 }
 
-/* ── Section headers ── */
+/* ═══ 6. METRIC TILES ═══ */
+.metric-tile {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-main);
+    border-top: 2px solid rgba(232,93,4,0.5);
+    border-radius: 2px;
+    padding: 20px 16px;
+    text-align: center;
+}
+.metric-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: #e85d04;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+.metric-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    margin-top: 7px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ═══ 7. SECTION HEADERS ═══ */
 .section-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 20px;
-    border-radius: 10px;
-    margin-bottom: 16px;
-    font-size: 1rem;
+    padding: 11px 16px;
+    border-radius: 2px;
+    margin-bottom: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 .section-evidence {
-    background: rgba(239,68,68,0.08);
-    border: 1px solid rgba(239,68,68,0.25);
-    color: #fca5a5;
+    background: rgba(230,57,70,0.07);
+    border: 1px solid rgba(230,57,70,0.2);
+    border-left: 3px solid #e63946;
+    color: var(--accent-red);
 }
 .section-truth {
-    background: rgba(34,197,94,0.08);
-    border: 1px solid rgba(34,197,94,0.25);
-    color: #86efac;
+    background: rgba(82,183,136,0.07);
+    border: 1px solid rgba(82,183,136,0.2);
+    border-left: 3px solid #52b788;
+    color: var(--accent-green);
 }
 
-/* ── Claim cards ── */
+/* ═══ 8. CLAIM CARDS ═══ */
 .claim-card {
-    background: #111827;
-    border-radius: 10px;
+    background: var(--bg-card);
+    border-radius: 2px;
     padding: 14px 16px;
-    margin-bottom: 10px;
-    border-left: 4px solid #374151;
-    position: relative;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-main);
+    border-left: 3px solid var(--border-main);
 }
-.claim-card.pdf_manual    { border-left-color: #6366f1; }
-.claim-card.catalog_table { border-left-color: #38bdf8; }
-.claim-card.legacy_scrape { border-left-color: #f59e0b; }
-.claim-card.erp_api       { border-left-color: #34d399; }
-.claim-card.winner        { border-left-color: #22c55e; background: rgba(34,197,94,0.06); }
+.claim-card.pdf_manual    { border-left-color: #7b68ee; }
+.claim-card.catalog_table { border-left-color: #00b4d8; }
+.claim-card.legacy_scrape { border-left-color: #f4a261; }
+.claim-card.erp_api       { border-left-color: #52b788; }
+.claim-card.winner {
+    border-left-color: #e85d04;
+    background: linear-gradient(90deg, rgba(232,93,4,0.08) 0%, var(--bg-card) 45%);
+}
+.claim-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.12rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    letter-spacing: -0.3px;
+}
+.claim-source {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+    line-height: 1.55;
+    font-family: 'Barlow', sans-serif;
+}
+.claim-id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+}
 
-.claim-value  { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: #f8fafc; font-weight: 500; }
-.claim-source { font-size: 0.78rem; color: #64748b; margin-top: 4px; }
-.claim-id     { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #475569; }
-
-/* ── Score pill ── */
+/* ═══ 9. SCORE PILLS ═══ */
 .score-pill {
     display: inline-block;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
 }
-.score-high   { background: rgba(34,197,94,0.15);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.3); }
-.score-mid    { background: rgba(99,102,241,0.15); color: #818cf8;  border: 1px solid rgba(99,102,241,0.3); }
-.score-low    { background: rgba(239,68,68,0.12);  color: #fca5a5;  border: 1px solid rgba(239,68,68,0.3); }
+.score-high { background: rgba(82,183,136,0.12);  color: var(--accent-green); border: 1px solid rgba(82,183,136,0.28); }
+.score-mid  { background: rgba(0,180,216,0.12);    color: var(--accent-teal); border: 1px solid rgba(0,180,216,0.28); }
+.score-low  { background: rgba(230,57,70,0.10);    color: var(--accent-red); border: 1px solid rgba(230,57,70,0.28); }
 
-/* ── Anomaly boxes ── */
+/* ═══ 10. ANOMALY BOXES ═══ */
 .anomaly-critical {
-    background: rgba(239,68,68,0.08);
-    border: 1px solid rgba(239,68,68,0.35);
-    border-radius: 10px;
-    padding: 16px;
+    background: rgba(230,57,70,0.07);
+    border: 1px solid rgba(230,57,70,0.28);
+    border-left: 4px solid #e63946;
+    border-radius: 2px;
+    padding: 16px 18px;
     margin-bottom: 12px;
 }
 .anomaly-warning {
-    background: rgba(245,158,11,0.08);
-    border: 1px solid rgba(245,158,11,0.35);
-    border-radius: 10px;
-    padding: 16px;
+    background: rgba(244,162,97,0.07);
+    border: 1px solid rgba(244,162,97,0.28);
+    border-left: 4px solid #f4a261;
+    border-radius: 2px;
+    padding: 16px 18px;
     margin-bottom: 12px;
 }
-.anomaly-title { font-size: 0.85rem; font-weight: 700; color: #fca5a5; margin-bottom: 6px; }
-.anomaly-warning .anomaly-title { color: #fcd34d; }
-.anomaly-desc  { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; }
-.anomaly-hint  { font-size: 0.78rem; color: #64748b; margin-top: 8px; font-style: italic; }
-
-/* ── Truth card ── */
-.truth-card {
-    background: linear-gradient(135deg, rgba(34,197,94,0.06), rgba(6,182,212,0.04));
-    border: 1px solid rgba(34,197,94,0.2);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-}
-.truth-property { font-size: 0.78rem; color: #64748b; font-family: 'JetBrains Mono', monospace; }
-.truth-value    { font-size: 1.5rem; font-weight: 700; color: #4ade80; font-family: 'JetBrains Mono', monospace; }
-.truth-confidence { font-size: 0.78rem; color: #34d399; margin-top: 4px; }
-
-/* ── Rejection log ── */
-.rejection-entry {
-    background: rgba(239,68,68,0.05);
-    border-left: 3px solid rgba(239,68,68,0.3);
-    border-radius: 0 6px 6px 0;
-    padding: 8px 12px;
-    margin-bottom: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: #94a3b8;
-}
-
-/* ── Metric tiles ── */
-.metric-tile {
-    background: #111827;
-    border: 1px solid #1e293b;
-    border-radius: 12px;
-    padding: 16px 20px;
-    text-align: center;
-}
-.metric-number { font-size: 2rem; font-weight: 700; color: #818cf8; }
-.metric-label  { font-size: 0.78rem; color: #64748b; margin-top: 4px; }
-
-/* ── Sidebar ── */
-section[data-testid="stSidebar"] {
-    background: #0d1226 !important;
-    border-right: 1px solid #1e293b;
-}
-
-/* ── Streamlit chrome overrides ── */
-.stButton > button {
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 20px;
+.anomaly-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.76rem;
     font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.2s ease;
+    letter-spacing: 0.08em;
+    color: var(--accent-red);
+    margin-bottom: 8px;
+    text-transform: uppercase;
 }
-.stButton > button:hover {
-    background: linear-gradient(135deg, #818cf8, #6366f1);
-    box-shadow: 0 4px 20px rgba(99,102,241,0.35);
-    transform: translateY(-1px);
+.anomaly-warning .anomaly-title { color: #f4a261; }
+.anomaly-desc { font-size: 0.82rem; color: var(--text-primary); line-height: 1.6; }
+.anomaly-hint { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; }
+
+/* ═══ 11. TRUTH CARDS ═══ */
+.truth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-main);
+    border-bottom: 2px solid rgba(82,183,136,0.4);
+    border-radius: 2px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
 }
+.truth-property {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.truth-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: #52b788;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+.truth-confidence {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+/* ═══ 12. REJECTION LOG ═══ */
+.rejection-entry {
+    background: rgba(230,57,70,0.04);
+    border-left: 2px solid rgba(230,57,70,0.28);
+    padding: 7px 12px;
+    margin-bottom: 5px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ═══ 13. EXPANDER — all states ═══ */
+[data-testid="stExpander"],
 div[data-testid="stExpander"] {
-    background: #111827;
-    border: 1px solid #1e293b;
-    border-radius: 10px;
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-main) !important;
+    border-radius: 2px !important;
+    overflow: hidden !important;
 }
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] details summary,
+div[data-testid="stExpander"] summary {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.8rem !important;
+    padding: 11px 14px !important;
+    border-radius: 0 !important;
+}
+[data-testid="stExpander"] details[open] > summary,
+div[data-testid="stExpander"] details[open] summary {
+    background: var(--bg-inset) !important;
+    border-bottom: 1px solid var(--border-main) !important;
+}
+[data-testid="stExpander"] summary p,
+[data-testid="stExpander"] summary span {
+    color: var(--text-primary) !important;
+    background: transparent !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+}
+/* Inner content div */
+[data-testid="stExpander"] details > div,
+div[data-testid="stExpander"] > details > div {
+    background: var(--bg-card) !important;
+    padding: 12px !important;
+}
+
+/* ═══ 14. NATIVE ALERT BOXES ═══ */
+[data-testid="stAlert"],
+div[role="alert"],
+div[data-baseweb="notification"] {
+    background: var(--bg-card) !important;
+    border-radius: 2px !important;
+    color: var(--text-primary) !important;
+    font-family: 'Barlow', sans-serif !important;
+}
+/* Info */
+[data-testid="stAlert"][data-type="info"],
+.stInfo > div {
+    border-left: 3px solid #00b4d8 !important;
+    background: rgba(0,180,216,0.07) !important;
+}
+/* Warning */
+[data-testid="stAlert"][data-type="warning"],
+.stWarning > div {
+    border-left: 3px solid #f4a261 !important;
+    background: rgba(244,162,97,0.07) !important;
+}
+/* Success */
+[data-testid="stAlert"][data-type="success"],
+.stSuccess > div {
+    border-left: 3px solid #52b788 !important;
+    background: rgba(82,183,136,0.07) !important;
+}
+/* Error */
+[data-testid="stAlert"][data-type="error"],
+.stError > div {
+    border-left: 3px solid #e63946 !important;
+    background: rgba(230,57,70,0.07) !important;
+}
+[data-testid="stAlert"] p,
+[data-testid="stAlert"] span,
+[data-testid="stAlert"] strong {
+    color: var(--text-primary) !important;
+    font-family: 'Barlow', sans-serif !important;
+}
+/* Streamlit 1.62 specific alert wrapper */
+div[data-testid="stCaptionContainer"] {
+    background: transparent !important;
+}
+.element-container div[data-stale="false"] div:has(> [data-testid="stAlert"]) {
+    background: transparent !important;
+}
+
+/* ═══ 15. DATAFRAMES ═══ */
+[data-testid="stDataFrame"] > div,
+[data-testid="stDataFrameResizable"],
+.stDataFrame {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-main) !important;
+    border-radius: 2px !important;
+}
+[data-testid="stDataFrame"] * {
+    color: var(--text-primary) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.74rem !important;
+}
+/* Glide data grid cells */
+.dvn-scroller,
+[role="grid"],
+[role="gridcell"],
+[role="columnheader"] {
+    background: var(--bg-card) !important;
+    border-color: var(--border-main) !important;
+}
+[role="columnheader"] {
+    background: var(--bg-panel) !important;
+    color: var(--text-muted) !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    border-bottom: 1px solid var(--border-main) !important;
+}
+
+/* ═══ 16. METRICS ═══ */
+[data-testid="stMetric"] {
+    background: transparent !important;
+}
+[data-testid="stMetric"] label,
+[data-testid="metric-container"] label {
+    color: var(--text-muted) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.68rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+}
+[data-testid="stMetricValue"],
+[data-testid="metric-container"] [data-testid="stMetricValue"] {
+    color: #e85d04 !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 1.5rem !important;
+}
+
+/* ═══ 17. MARKDOWN OVERRIDES ═══ */
+.stMarkdown p,
+.stMarkdown li,
+.stMarkdown span:not(.score-pill):not(.hero-title-fire),
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stText"] {
+    color: var(--text-primary) !important;
+    font-family: 'Barlow', sans-serif !important;
+}
+.stMarkdown code,
+.stMarkdown pre {
+    background: var(--bg-inset) !important;
+    color: #00b4d8 !important;
+    border: 1px solid var(--border-main) !important;
+    border-radius: 2px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.8rem !important;
+    padding: 1px 6px !important;
+}
+.stMarkdown h3 {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.74rem !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    color: var(--text-muted) !important;
+    border-bottom: 1px solid var(--border-main) !important;
+    padding-bottom: 6px !important;
+    margin: 20px 0 12px 0 !important;
+}
+[data-testid="stCaption"] p,
+[data-testid="stCaption"] {
+    color: var(--text-muted) !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.7rem !important;
+}
+/* Dividers */
+hr,
+[data-testid="stHorizontalRule"] hr,
+[data-testid="stDivider"] hr {
+    border-color: var(--border-main) !important;
+    opacity: 0.6 !important;
+}
+
+/* ═══ 18. FOOTER ═══ */
+.footer-bar {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px 0 8px 0;
+}
+.footer-bar .fire { color: #e85d04; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -377,13 +861,400 @@ def render_score_table(res: ResolutionResult) -> None:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 with st.sidebar:
-    st.markdown("""
-    <div style="text-align:center; padding: 20px 0 10px 0;">
-        <div style="font-size:2.5rem;">🔬</div>
-        <div style="font-size:1.1rem; font-weight:700; color:#818cf8;">Forensic Data Agent</div>
-        <div style="font-size:0.75rem; color:#475569; margin-top:4px;">Industrial Intelligence Platform</div>
+    # ── Theme toggle (URL-param based — doesn't reset pipeline state) ──
+    params = st.query_params
+    is_dark = params.get("theme", "dark") != "light"
+    if is_dark:
+        if st.button("☀️ Light Mode", key="theme_toggle"):
+            st.query_params["theme"] = "light"
+            st.rerun()
+    else:
+        if st.button("🌑 Dark Mode", key="theme_toggle"):
+            st.query_params["theme"] = "dark"
+            st.rerun()
+    # Inject theme CSS variable override for light mode
+    if not is_dark:
+        st.markdown("""
+        <style>
+        /* ═══ LIGHT THEME — full override of all hardcoded dark values ═══ */
+        :root {
+            --bg-base:      #f5f0eb !important;
+            --bg-panel:     #ede7df !important;
+            --bg-card:      #fff8f2 !important;
+            --bg-inset:     #e8e0d6 !important;
+            --bg-popover:   #fff8f2 !important;
+            --accent-fire:  #c44b02 !important;
+            --accent-teal:  #0077a8 !important;
+            --accent-gold:  #b5541a !important;
+            --accent-green: #2d6a4f !important;
+            --accent-red:   #b5202c !important;
+            --border-main:  #c9bfb5 !important;
+            --border-hot:   rgba(196,75,2,0.45) !important;
+            --text-primary: #1a1410 !important;
+            --text-muted:   #6b5d52 !important;
+            --text-dim:     #9c8b80 !important;
+        }
+
+        /* ── Main app backgrounds ── */
+        html, body,
+        .stApp,
+        [data-testid="stAppViewContainer"],
+        [data-testid="stMain"],
+        [data-testid="stMainBlockContainer"],
+        [data-testid="stVerticalBlock"],
+        [data-testid="stBottomBlockContainer"],
+        [data-testid="stHorizontalBlock"],
+        .main .block-container,
+        .main,
+        section.main,
+        div.block-container {
+            background-color: #f5f0eb !important;
+            color: #1a1410 !important;
+        }
+        .element-container,
+        .stMarkdown,
+        [data-testid="stMarkdownContainer"] {
+            background-color: transparent !important;
+            color: #1a1410 !important;
+        }
+
+        /* ── Circuit grid: lighter for light mode ── */
+        [data-testid="stMain"]::before, .main::before {
+            background-image:
+                linear-gradient(rgba(196,75,2,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(196,75,2,0.04) 1px, transparent 1px) !important;
+        }
+
+        /* ── Header ── */
+        header[data-testid="stHeader"] {
+            background: #f5f0eb !important;
+            border-bottom: 1px solid #c9bfb5 !important;
+        }
+        [data-testid="stToolbar"] {
+            background: #f5f0eb !important;
+        }
+        [data-testid="stToolbar"] button { color: #6b5d52 !important; }
+
+        /* ── Sidebar ── */
+        section[data-testid="stSidebar"],
+        section[data-testid="stSidebar"] > div,
+        section[data-testid="stSidebar"] > div > div,
+        section[data-testid="stSidebar"] .stMarkdown {
+            background: #ede7df !important;
+            background-color: #ede7df !important;
+            border-right: 1px solid #c9bfb5 !important;
+        }
+        section[data-testid="stSidebar"] *:not(.hero-badge):not(button) {
+            color: #1a1410 !important;
+        }
+        section[data-testid="stSidebar"] .stMarkdown h3 {
+            color: #6b5d52 !important;
+            border-bottom: 1px solid #c9bfb5 !important;
+        }
+        section[data-testid="stSidebar"] hr {
+            border-color: #c9bfb5 !important;
+        }
+
+        /* ── Sidebar inputs ── */
+        section[data-testid="stSidebar"] input,
+        section[data-testid="stSidebar"] div[data-baseweb="input"],
+        section[data-testid="stSidebar"] div[data-baseweb="input"] > div {
+            background: #fff8f2 !important;
+            background-color: #fff8f2 !important;
+            border-color: #c9bfb5 !important;
+            color: #1a1410 !important;
+        }
+        section[data-testid="stSidebar"] input:focus,
+        section[data-testid="stSidebar"] div[data-baseweb="input"]:focus-within {
+            border-color: #c44b02 !important;
+            box-shadow: 0 0 0 2px rgba(196,75,2,0.15) !important;
+        }
+
+        /* ── Sidebar selectbox ── */
+        section[data-testid="stSidebar"] [data-baseweb="select"] > div,
+        section[data-testid="stSidebar"] [data-baseweb="select"] > div > div {
+            background: #fff8f2 !important;
+            background-color: #fff8f2 !important;
+            border-color: #c9bfb5 !important;
+            color: #1a1410 !important;
+        }
+        section[data-testid="stSidebar"] [data-baseweb="select"] span,
+        section[data-testid="stSidebar"] [data-baseweb="select"] [role="combobox"] {
+            color: #1a1410 !important;
+        }
+
+        /* ── Dropdown popover ── */
+        [data-baseweb="popover"] > div,
+        [data-baseweb="menu"],
+        [role="listbox"],
+        [data-baseweb="popover"] [role="option"] {
+            background: #fff8f2 !important;
+            background-color: #fff8f2 !important;
+            border-color: #c9bfb5 !important;
+            color: #1a1410 !important;
+        }
+        [data-baseweb="popover"] [role="option"]:hover,
+        [aria-selected="true"] {
+            background: #e8e0d6 !important;
+            background-color: #e8e0d6 !important;
+            color: #c44b02 !important;
+        }
+
+        /* ── Sidebar radio ── */
+        section[data-testid="stSidebar"] [data-testid="stRadio"] label,
+        section[data-testid="stSidebar"] [data-testid="stRadio"] p {
+            color: #1a1410 !important;
+        }
+        section[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radio"] {
+            background: #fff8f2 !important;
+            background-color: #fff8f2 !important;
+            border-color: #c9bfb5 !important;
+        }
+
+        /* ── Number input buttons ── */
+        section[data-testid="stSidebar"] button[data-testid="stNumberInputStepDown"],
+        section[data-testid="stSidebar"] button[data-testid="stNumberInputStepUp"] {
+            background: #e8e0d6 !important;
+            background-color: #e8e0d6 !important;
+            border-color: #c9bfb5 !important;
+            color: #6b5d52 !important;
+        }
+
+        /* ── Sidebar run button ── */
+        section[data-testid="stSidebar"] .stButton > button {
+            background: transparent !important;
+            color: #c44b02 !important;
+            border: 1px solid #c44b02 !important;
+        }
+        section[data-testid="stSidebar"] .stButton > button:hover {
+            background: #c44b02 !important;
+            color: #fff !important;
+            box-shadow: 0 0 18px rgba(196,75,2,0.3) !important;
+        }
+        section[data-testid="stSidebar"] .stButton:first-child > button {
+            border-color: #c9bfb5 !important;
+            color: #6b5d52 !important;
+        }
+        section[data-testid="stSidebar"] .stButton:first-child > button:hover {
+            background: #e8e0d6 !important;
+            color: #1a1410 !important;
+        }
+
+        /* ── Hero banner ── */
+        .hero-banner {
+            background: linear-gradient(118deg, #fffaf5 0%, #f5ede3 55%, #fdf6ef 100%) !important;
+            border: 1px solid #c9bfb5 !important;
+            border-top: 3px solid #c44b02 !important;
+        }
+        .hero-banner::after {
+            background:
+                radial-gradient(ellipse 55% 80% at 88% 50%, rgba(196,75,2,0.06) 0%, transparent 65%),
+                radial-gradient(ellipse 35% 60% at 10% 50%, rgba(0,119,168,0.04) 0%, transparent 60%) !important;
+        }
+        .hero-eyebrow { color: #c44b02 !important; }
+        .hero-eyebrow::before, .hero-eyebrow::after { background: #c44b02 !important; }
+        .hero-title { color: #1a1410 !important; }
+        .hero-title-fire { color: #c44b02 !important; }
+        .hero-badge {
+            background: rgba(196,75,2,0.08) !important;
+            border: 1px solid rgba(196,75,2,0.3) !important;
+            color: #c44b02 !important;
+        }
+        .hero-thesis { color: #6b5d52 !important; }
+        .hero-thesis em { color: #b5541a !important; }
+
+        /* ── Metric tiles ── */
+        .metric-tile {
+            background: #ede7df !important;
+            border: 1px solid #c9bfb5 !important;
+            border-top: 2px solid rgba(196,75,2,0.5) !important;
+        }
+        .metric-number { color: #c44b02 !important; }
+        .metric-label { color: #6b5d52 !important; }
+
+        /* ── Section headers ── */
+        .section-evidence {
+            background: rgba(181,32,44,0.06) !important;
+            border: 1px solid rgba(181,32,44,0.2) !important;
+            border-left: 3px solid #b5202c !important;
+            color: #b5202c !important;
+        }
+        .section-truth {
+            background: rgba(45,106,79,0.06) !important;
+            border: 1px solid rgba(45,106,79,0.2) !important;
+            border-left: 3px solid #2d6a4f !important;
+            color: #2d6a4f !important;
+        }
+
+        /* ── Claim cards ── */
+        .claim-card {
+            background: #fff8f2 !important;
+            border: 1px solid #c9bfb5 !important;
+            border-left: 3px solid #c9bfb5 !important;
+        }
+        .claim-card.winner {
+            border-left-color: #c44b02 !important;
+            background: linear-gradient(90deg, rgba(196,75,2,0.07) 0%, #fff8f2 45%) !important;
+        }
+        .claim-value { color: #1a1410 !important; }
+        .claim-source { color: #6b5d52 !important; }
+        .claim-id { color: #9c8b80 !important; }
+
+        /* ── Score pills ── */
+        .score-high { background: rgba(45,106,79,0.1) !important;  color: #2d6a4f !important; border: 1px solid rgba(45,106,79,0.3) !important; }
+        .score-mid  { background: rgba(0,119,168,0.1) !important;   color: #0077a8 !important; border: 1px solid rgba(0,119,168,0.3) !important; }
+        .score-low  { background: rgba(181,32,44,0.08) !important;  color: #b5202c !important; border: 1px solid rgba(181,32,44,0.3) !important; }
+
+        /* ── Anomaly boxes ── */
+        .anomaly-critical {
+            background: rgba(181,32,44,0.06) !important;
+            border: 1px solid rgba(181,32,44,0.25) !important;
+            border-left: 4px solid #b5202c !important;
+        }
+        .anomaly-warning {
+            background: rgba(181,84,26,0.06) !important;
+            border: 1px solid rgba(181,84,26,0.25) !important;
+            border-left: 4px solid #b5541a !important;
+        }
+        .anomaly-title { color: #b5202c !important; }
+        .anomaly-warning .anomaly-title { color: #b5541a !important; }
+        .anomaly-desc { color: #1a1410 !important; }
+        .anomaly-hint { color: #6b5d52 !important; }
+
+        /* ── Truth cards ── */
+        .truth-card {
+            background: #fff8f2 !important;
+            border: 1px solid #c9bfb5 !important;
+            border-bottom: 2px solid rgba(45,106,79,0.4) !important;
+        }
+        .truth-property { color: #6b5d52 !important; }
+        .truth-value { color: #2d6a4f !important; }
+        .truth-confidence { color: #6b5d52 !important; }
+
+        /* ── Rejection log ── */
+        .rejection-entry {
+            background: rgba(181,32,44,0.04) !important;
+            border-left: 2px solid rgba(181,32,44,0.25) !important;
+            color: #6b5d52 !important;
+        }
+
+        /* ── Expanders ── */
+        [data-testid="stExpander"],
+        div[data-testid="stExpander"] {
+            background: #fff8f2 !important;
+            border: 1px solid #c9bfb5 !important;
+        }
+        [data-testid="stExpander"] summary,
+        div[data-testid="stExpander"] summary {
+            background: #fff8f2 !important;
+            color: #1a1410 !important;
+        }
+        [data-testid="stExpander"] details[open] > summary,
+        div[data-testid="stExpander"] details[open] summary {
+            background: #e8e0d6 !important;
+            border-bottom: 1px solid #c9bfb5 !important;
+        }
+        [data-testid="stExpander"] summary p,
+        [data-testid="stExpander"] summary span {
+            color: #1a1410 !important;
+        }
+        [data-testid="stExpander"] details > div,
+        div[data-testid="stExpander"] > details > div {
+            background: #fff8f2 !important;
+        }
+
+        /* ── Alert boxes ── */
+        [data-testid="stAlert"],
+        div[role="alert"],
+        div[data-baseweb="notification"] {
+            background: #fff8f2 !important;
+            color: #1a1410 !important;
+        }
+        [data-testid="stAlert"] p,
+        [data-testid="stAlert"] span,
+        [data-testid="stAlert"] strong {
+            color: #1a1410 !important;
+        }
+
+        /* ── DataFrames ── */
+        [data-testid="stDataFrame"] > div,
+        [data-testid="stDataFrameResizable"],
+        .stDataFrame {
+            background: #fff8f2 !important;
+            border: 1px solid #c9bfb5 !important;
+        }
+        [data-testid="stDataFrame"] * { color: #1a1410 !important; }
+        .dvn-scroller, [role="grid"], [role="gridcell"], [role="columnheader"] {
+            background: #fff8f2 !important;
+            border-color: #c9bfb5 !important;
+        }
+        [role="columnheader"] {
+            background: #ede7df !important;
+            color: #6b5d52 !important;
+            border-bottom: 1px solid #c9bfb5 !important;
+        }
+
+        /* ── Metrics ── */
+        [data-testid="stMetricValue"],
+        [data-testid="metric-container"] [data-testid="stMetricValue"] {
+            color: #c44b02 !important;
+        }
+        [data-testid="stMetric"] label,
+        [data-testid="metric-container"] label {
+            color: #6b5d52 !important;
+        }
+
+        /* ── Markdown text ── */
+        .stMarkdown p, .stMarkdown li,
+        .stMarkdown span:not(.score-pill):not(.hero-title-fire),
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stText"] {
+            color: #1a1410 !important;
+        }
+        .stMarkdown code, .stMarkdown pre {
+            background: #e8e0d6 !important;
+            color: #0077a8 !important;
+            border: 1px solid #c9bfb5 !important;
+        }
+        .stMarkdown h3 {
+            color: #6b5d52 !important;
+            border-bottom: 1px solid #c9bfb5 !important;
+        }
+        [data-testid="stCaption"] p,
+        [data-testid="stCaption"] {
+            color: #6b5d52 !important;
+        }
+        hr, [data-testid="stHorizontalRule"] hr, [data-testid="stDivider"] hr {
+            border-color: #c9bfb5 !important;
+        }
+
+        /* ── Footer ── */
+        .footer-bar { color: #9c8b80 !important; }
+        .footer-bar .fire { color: #c44b02 !important; }
+
+        /* ── Sidebar inline styles (hardcoded dark) ── */
+        section[data-testid="stSidebar"] div[style*="#d4cfc9"],
+        section[data-testid="stSidebar"] div[style*="color:#d4cfc9"] {
+            color: #1a1410 !important;
+        }
+        section[data-testid="stSidebar"] div[style*="#4a4038"],
+        section[data-testid="stSidebar"] div[style*="color:#4a4038"] {
+            color: #6b5d52 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+    brand_name_color   = "#d4cfc9" if is_dark else "#1a1410"
+    brand_sub_color    = "#4a4038" if is_dark else "#6b5d52"
+    brand_accent_color = "#e85d04" if is_dark else "#c44b02"
+    st.markdown(f"""
+    <div style="padding:18px 4px 10px 4px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.18em;color:{brand_accent_color};text-transform:uppercase;margin-bottom:8px;">// sys.agent.forensic</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;color:{brand_name_color};letter-spacing:-0.5px;line-height:1.1;">Forensic<br/><span style='color:{brand_accent_color};'>Data Agent</span></div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:{brand_sub_color};margin-top:8px;letter-spacing:0.06em;text-transform:uppercase;">Industrial Intelligence</div>
     </div>
     """, unsafe_allow_html=True)
+
 
     st.divider()
     st.markdown("### ⚙️ Pipeline Configuration")
@@ -515,9 +1386,13 @@ if run_btn:
 
 st.markdown("""
 <div class="hero-banner">
-    <div class="hero-badge">PROBABILISTIC EDGE · DETERMINISTIC CORE</div>
-    <div class="hero-title">🔬 Forensic Data Agent</div>
-    <p class="hero-thesis">"Industrial commerce doesn't have a data extraction problem — it has a TRUTH problem."</p>
+    <div class="hero-eyebrow">Probabilistic Edge &nbsp;·&nbsp; Deterministic Core</div>
+    <div class="hero-title">Forensic <span class="hero-title-fire">Data Agent</span></div>
+    <div class="hero-badge">&#x25A0; Industrial Intelligence Pipeline &nbsp;·&nbsp; Hackathon 2026</div>
+    <p class="hero-thesis">
+        &ldquo;Industrial commerce doesn&rsquo;t have a data extraction problem &mdash;
+        it has a <em>TRUTH problem</em>.&rdquo;
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -721,9 +1596,22 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
 
 st.divider()
 st.markdown("""
-<div style="text-align:center; padding:16px; color:#475569; font-size:0.78rem;">
-    🔬 <strong>Forensic Data Agent</strong> &nbsp;·&nbsp; Industrial Intelligence Pipeline &nbsp;·&nbsp;
-    Hackathon Edition 2026 &nbsp;·&nbsp; 
-    Built on: Pydantic v2 · NIST SP 811 · IEC 60034 · IEC 60529
+<div style="
+    display:flex; align-items:center; justify-content:center; gap:24px;
+    padding:20px 0 8px 0;
+    font-family:'IBM Plex Mono',monospace; font-size:0.64rem;
+    letter-spacing:0.1em; text-transform:uppercase; color:#3d3530;
+">
+    <span style='color:#e85d04;'>&#x25A0;</span>
+    <span>Forensic Data Agent</span>
+    <span style='color:#3d3530;'>&#x2F;</span>
+    <span>NIST SP&nbsp;811</span>
+    <span style='color:#3d3530;'>&#x2F;</span>
+    <span>IEC&nbsp;60034</span>
+    <span style='color:#3d3530;'>&#x2F;</span>
+    <span>IEC&nbsp;60529</span>
+    <span style='color:#3d3530;'>&#x2F;</span>
+    <span>Hackathon&nbsp;2026</span>
+    <span style='color:#e85d04;'>&#x25A0;</span>
 </div>
 """, unsafe_allow_html=True)
