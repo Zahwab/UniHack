@@ -211,31 +211,30 @@ section[data-testid="stSidebar"] hr {{
     opacity: 0.5;
 }}
 
-/* ═══ 4. SIDEBAR WIDGETS ═══ */
-/* Inputs */
-section[data-testid="stSidebar"] input,
-section[data-testid="stSidebar"] div[data-baseweb="input"],
-section[data-testid="stSidebar"] div[data-baseweb="input"] > div {{
-    background: {C_SIDEBAR_CARD} !important;
-    background-color: {C_SIDEBAR_CARD} !important;
+/* ── App-wide Inputs ── */
+input,
+div[data-baseweb="input"],
+div[data-baseweb="input"] > div {{
+    background: {C_BG_CARD} !important;
+    background-color: {C_BG_CARD} !important;
     border-color: {C_BORDER} !important;
     color: {C_TEXT_PRIMARY} !important;
 }}
-section[data-testid="stSidebar"] input:focus,
-section[data-testid="stSidebar"] div[data-baseweb="input"]:focus-within {{
+input:focus,
+div[data-baseweb="input"]:focus-within {{
     border-color: {C_ACCENT_FIRE} !important;
     box-shadow: 0 0 0 2px rgba(232,93,4,0.15) !important;
 }}
-/* Selectbox */
-section[data-testid="stSidebar"] [data-baseweb="select"] > div,
-section[data-testid="stSidebar"] [data-baseweb="select"] > div > div {{
-    background: {C_SIDEBAR_CARD} !important;
-    background-color: {C_SIDEBAR_CARD} !important;
+/* ── App-wide Selectbox ── */
+[data-baseweb="select"] > div,
+[data-baseweb="select"] > div > div {{
+    background: {C_BG_CARD} !important;
+    background-color: {C_BG_CARD} !important;
     border-color: {C_BORDER} !important;
     color: {C_TEXT_PRIMARY} !important;
 }}
-section[data-testid="stSidebar"] [data-baseweb="select"] span,
-section[data-testid="stSidebar"] [data-baseweb="select"] [role="combobox"] {{
+[data-baseweb="select"] span,
+[data-baseweb="select"] [role="combobox"] {{
     color: {C_TEXT_PRIMARY} !important;
     background: transparent !important;
     background-color: transparent !important;
@@ -266,14 +265,14 @@ section[data-testid="stSidebar"] [data-testid="stSlider"] [data-baseweb="slider"
     background: {C_ACCENT_FIRE} !important;
     background-color: {C_ACCENT_FIRE} !important;
 }}
-/* Radio */
-section[data-testid="stSidebar"] [data-testid="stRadio"] label,
-section[data-testid="stSidebar"] [data-testid="stRadio"] p {{
+/* ── App-wide Radio ── */
+[data-testid="stRadio"] label,
+[data-testid="stRadio"] p {{
     color: {C_TEXT_PRIMARY} !important;
 }}
-section[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radio"] {{
-    background: {C_SIDEBAR_CARD} !important;
-    background-color: {C_SIDEBAR_CARD} !important;
+[data-testid="stRadio"] div[role="radio"][aria-checked="false"] {{
+    background: transparent !important;
+    background-color: transparent !important;
     border-color: {C_BORDER} !important;
 }}
 /* Number input buttons */
@@ -620,8 +619,7 @@ div[data-testid="stExpander"] details[open] summary {{
     background: {C_BG_INSET} !important;
     border-bottom: 1px solid {C_BORDER} !important;
 }}
-[data-testid="stExpander"] summary p,
-[data-testid="stExpander"] summary span {{
+[data-testid="stExpander"] summary p {{
     color: {C_TEXT_PRIMARY} !important;
     background: transparent !important;
     font-family: 'IBM Plex Mono', monospace !important;
@@ -709,6 +707,31 @@ div[data-testid="stCaptionContainer"] {{
     text-transform: uppercase !important;
     border-bottom: 1px solid {C_BORDER} !important;
 }}
+/* Element Toolbars */
+.stElementToolbar,
+[data-testid="stElementToolbar"],
+[data-testid="stDataFrameToolbar"],
+[data-testid="stElementToolbar"] > div,
+[data-testid="stDataFrameToolbar"] > div {{
+    background: {C_BG_POPOVER} !important;
+    background-color: {C_BG_POPOVER} !important;
+    border: 1px solid {C_BORDER} !important;
+    border-radius: 4px !important;
+}}
+.stElementToolbar button,
+[data-testid="stElementToolbar"] button,
+[data-testid="stDataFrameToolbar"] button {{
+    background: transparent !important;
+    background-color: transparent !important;
+    color: {C_TEXT_PRIMARY} !important;
+}}
+.stElementToolbar svg,
+[data-testid="stElementToolbar"] svg,
+[data-testid="stDataFrameToolbar"] svg {{
+    color: {C_TEXT_PRIMARY} !important;
+    fill: {C_TEXT_PRIMARY} !important;
+    stroke: {C_TEXT_PRIMARY} !important;
+}}
 
 /* ═══ 16. METRICS ═══ */
 [data-testid="stMetric"] {{
@@ -739,7 +762,8 @@ div[data-testid="stCaptionContainer"] {{
     font-family: 'Barlow', sans-serif !important;
 }}
 .stMarkdown code,
-.stMarkdown pre {{
+.stMarkdown pre,
+code {{
     background: {C_CODE_BG} !important;
     color: {C_CODE_FG} !important;
     border: 1px solid {C_BORDER} !important;
@@ -831,7 +855,7 @@ def render_claim_card(claim: EvidenceClaim, is_winner: bool = False) -> None:
     src    = claim.source_type.value
     icon   = SOURCE_ICON.get(src, "📦")
     winner_cls = "winner" if is_winner else src
-    winner_badge = "  ✅ SELECTED" if is_winner else ""
+    winner_badge = "  SELECTED" if is_winner else ""
 
     score_html = ""
     if claim.evidence_score is not None:
@@ -875,7 +899,7 @@ def render_anomaly(ano: ForensicAnomalyObject) -> None:
 
 
 def render_truth_card(prop_name: str, res: ResolutionResult) -> None:
-    contested_badge = "⚔️ Contested" if res.was_contested else "✅ Uncontested"
+    contested_badge = "Contested" if res.was_contested else "Uncontested"
     st.markdown(f"""
     <div class="truth-card">
         <div class="truth-property">{prop_name} &nbsp;·&nbsp; {contested_badge}</div>
@@ -921,11 +945,11 @@ with st.sidebar:
     params = st.query_params
     is_dark = params.get("theme", "dark") != "light"
     if is_dark:
-        if st.button("☀️ Light Mode", key="theme_toggle"):
+        if st.button("Light Mode", key="theme_toggle"):
             st.query_params["theme"] = "light"
             st.rerun()
     else:
-        if st.button("🌑 Dark Mode", key="theme_toggle"):
+        if st.button("Dark Mode", key="theme_toggle"):
             st.query_params["theme"] = "dark"
             st.rerun()
     # Inject theme CSS variable override for light mode
@@ -1011,31 +1035,31 @@ with st.sidebar:
             border-color: #c9bfb5 !important;
         }
 
-        /* ── Sidebar inputs ── */
-        section[data-testid="stSidebar"] input,
-        section[data-testid="stSidebar"] div[data-baseweb="input"],
-        section[data-testid="stSidebar"] div[data-baseweb="input"] > div {
+        /* ── App-wide inputs ── */
+        input,
+        div[data-baseweb="input"],
+        div[data-baseweb="input"] > div {
             background: #fff8f2 !important;
             background-color: #fff8f2 !important;
             border-color: #c9bfb5 !important;
             color: #1a1410 !important;
         }
-        section[data-testid="stSidebar"] input:focus,
-        section[data-testid="stSidebar"] div[data-baseweb="input"]:focus-within {
+        input:focus,
+        div[data-baseweb="input"]:focus-within {
             border-color: #c44b02 !important;
             box-shadow: 0 0 0 2px rgba(196,75,2,0.15) !important;
         }
 
-        /* ── Sidebar selectbox ── */
-        section[data-testid="stSidebar"] [data-baseweb="select"] > div,
-        section[data-testid="stSidebar"] [data-baseweb="select"] > div > div {
+        /* ── App-wide selectbox ── */
+        [data-baseweb="select"] > div,
+        [data-baseweb="select"] > div > div {
             background: #fff8f2 !important;
             background-color: #fff8f2 !important;
             border-color: #c9bfb5 !important;
             color: #1a1410 !important;
         }
-        section[data-testid="stSidebar"] [data-baseweb="select"] span,
-        section[data-testid="stSidebar"] [data-baseweb="select"] [role="combobox"] {
+        [data-baseweb="select"] span,
+        [data-baseweb="select"] [role="combobox"] {
             color: #1a1410 !important;
         }
 
@@ -1056,12 +1080,12 @@ with st.sidebar:
             color: #c44b02 !important;
         }
 
-        /* ── Sidebar radio ── */
-        section[data-testid="stSidebar"] [data-testid="stRadio"] label,
-        section[data-testid="stSidebar"] [data-testid="stRadio"] p {
+        /* ── App-wide radio ── */
+        [data-testid="stRadio"] label,
+        [data-testid="stRadio"] p {
             color: #1a1410 !important;
         }
-        section[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radio"] {
+        [data-testid="stRadio"] div[role="radio"][aria-checked="false"] {
             background: #fff8f2 !important;
             background-color: #fff8f2 !important;
             border-color: #c9bfb5 !important;
@@ -1210,8 +1234,7 @@ with st.sidebar:
             background: #e8e0d6 !important;
             border-bottom: 1px solid #c9bfb5 !important;
         }
-        [data-testid="stExpander"] summary p,
-        [data-testid="stExpander"] summary span {
+        [data-testid="stExpander"] summary p {
             color: #1a1410 !important;
         }
         [data-testid="stExpander"] details > div,
@@ -1250,6 +1273,32 @@ with st.sidebar:
             border-bottom: 1px solid #c9bfb5 !important;
         }
 
+        /* ── Element Toolbars ── */
+        .stElementToolbar,
+        [data-testid="stElementToolbar"],
+        [data-testid="stDataFrameToolbar"],
+        [data-testid="stElementToolbar"] > div,
+        [data-testid="stDataFrameToolbar"] > div {
+            background: #fff8f2 !important;
+            background-color: #fff8f2 !important;
+            border: 1px solid #c9bfb5 !important;
+            border-radius: 4px !important;
+        }
+        .stElementToolbar button,
+        [data-testid="stElementToolbar"] button,
+        [data-testid="stDataFrameToolbar"] button {
+            background: transparent !important;
+            background-color: transparent !important;
+            color: #1a1410 !important;
+        }
+        .stElementToolbar svg,
+        [data-testid="stElementToolbar"] svg,
+        [data-testid="stDataFrameToolbar"] svg {
+            color: #1a1410 !important;
+            fill: #1a1410 !important;
+            stroke: #1a1410 !important;
+        }
+
         /* ── Metrics ── */
         [data-testid="stMetricValue"],
         [data-testid="metric-container"] [data-testid="stMetricValue"] {
@@ -1267,7 +1316,7 @@ with st.sidebar:
         [data-testid="stText"] {
             color: #1a1410 !important;
         }
-        .stMarkdown code, .stMarkdown pre {
+        .stMarkdown code, .stMarkdown pre, code {
             background: #e8e0d6 !important;
             color: #0077a8 !important;
             border: 1px solid #c9bfb5 !important;
@@ -1313,21 +1362,21 @@ with st.sidebar:
 
 
     st.divider()
-    st.markdown("### ⚙️ Pipeline Configuration")
+    st.markdown("### Pipeline Configuration")
 
     demo_opts = {"DEFAULT_DEMO": "Original Demo (ABB M3AA 75kW)"}
     if HACKATHON_DEMO_CASES:
         demo_opts.update({k: f"{k} ({v['asset_name']})" for k, v in HACKATHON_DEMO_CASES.items()})
 
     selected_demo_key = st.selectbox(
-        "🎭 Select Demo Case",
+        "Select Demo Case",
         options=list(demo_opts.keys()),
         format_func=lambda x: demo_opts[x]
     )
 
     mode = st.radio(
         "Data Source",
-        ["🎭 Live Demo", "✍️ Manual Input"],
+        ["Live Demo", "Manual Input"],
         index=0,
     )
 
@@ -1348,7 +1397,7 @@ with st.sidebar:
 
     st.divider()
 
-    run_btn = st.button("🚀 Run Forensic Pipeline", use_container_width=True)
+    run_btn = st.button("Run Forensic Pipeline", use_container_width=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1356,7 +1405,7 @@ with st.sidebar:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 if run_btn:
-    with st.spinner("🔬 Running 4-pass Forensic Pipeline..."):
+    with st.spinner("Running 4-pass Forensic Pipeline..."):
         if "Demo" in mode:
             if selected_demo_key == "DEFAULT_DEMO" or not HACKATHON_DEMO_CASES:
                 store, demo_kwargs = build_demo_store()
@@ -1480,7 +1529,7 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
 
     st.markdown("<br/>", unsafe_allow_html=True)
 else:
-    st.info("👈 Configure the pipeline in the sidebar and click **Run Forensic Pipeline** to begin.")
+    st.info("Configure the pipeline in the sidebar and click **Run Forensic Pipeline** to begin.")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1512,7 +1561,7 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
         contested_props = snapshot.conflicted_properties()
         if contested_props:
             st.warning(
-                f"⚔️ **{len(contested_props)} contested propert{'y' if len(contested_props)==1 else 'ies'} detected:** "
+                f"**{len(contested_props)} contested propert{'y' if len(contested_props)==1 else 'ies'} detected:** "
                 + ", ".join(f"`{p}`" for p in contested_props)
             )
 
@@ -1537,17 +1586,17 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
                     vals = [c.normalized_value for c in prop.claims]
                     spread = max(vals) - min(vals)
                     st.markdown(
-                        f"<div style='font-size:0.78rem;color:#64748b;margin-top:6px;'>"
-                        f"📐 Value spread: {min(vals)} → {max(vals)} {prop.claims[0].normalized_unit} "
+                        f"<div style='font-size:0.78rem;color:var(--text-muted);margin-top:6px;'>"
+                        f"Value spread: {min(vals)} → {max(vals)} {prop.claims[0].normalized_unit} "
                         f"(Δ={spread:.1f})</div>",
                         unsafe_allow_html=True,
                     )
 
         st.divider()
-        st.markdown("### 🧪 Unit Normalization Traces")
+        st.markdown("### Unit Normalization Traces")
         if result.unit_traces:
             for trace_key, trace in result.unit_traces.items():
-                with st.expander(f"🔢 `{trace.raw_string}` → `{trace.final_display_value}`"):
+                with st.expander(f"`{trace.raw_string}` → `{trace.final_display_value}`"):
                     col_a, col_b = st.columns(2)
                     col_a.metric("Input",            trace.raw_string)
                     col_b.metric("SI Output",        trace.final_display_value)
@@ -1580,11 +1629,11 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
 
         # ── Forensic Anomaly Alerts ──
         if result.anomalies:
-            st.markdown(f"### 🚨 {len(result.anomalies)} Forensic Anomal{'y' if len(result.anomalies)==1 else 'ies'} Detected")
+            st.markdown(f"### {len(result.anomalies)} Forensic Anomal{'y' if len(result.anomalies)==1 else 'ies'} Detected")
             for ano in result.anomalies:
                 render_anomaly(ano)
         else:
-            st.success("✅ **All physics invariants passed.** No anomalies detected.")
+            st.success("**All physics invariants passed.** No anomalies detected.")
 
         st.divider()
 
@@ -1596,7 +1645,7 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
         st.divider()
 
         # ── Evidence Score Breakdown ──
-        st.markdown("### 📊 Evidence Score Breakdown Matrix")
+        st.markdown("### Evidence Score Breakdown Matrix")
         st.caption(
             "S(claim) = 0.40×Authority + 0.30×Confidence + 0.15×Recency + 0.15×PhysicsBonus"
         )
@@ -1608,7 +1657,7 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
         st.divider()
 
         # ── Unit Normalizer Sandbox ──
-        st.markdown("### 🔬 Live Unit Normalizer Sandbox")
+        st.markdown("### Live Unit Normalizer Sandbox")
         st.caption("NIST SP 811-compliant conversion with full audit trail")
 
         sandbox_input = st.text_input(
@@ -1618,7 +1667,7 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
         if sandbox_input:
             try:
                 trace = normalize_unit(sandbox_input)
-                st.success(f"✅ `{trace.raw_string}` → **`{trace.final_display_value}`**")
+                st.success(f"`{trace.raw_string}` → **`{trace.final_display_value}`**")
                 st.markdown(f"""
                 | Field | Value |
                 |-------|-------|
@@ -1643,7 +1692,7 @@ if st.session_state.run_complete and st.session_state.pipeline_result:
             if ano_live:
                 render_anomaly(ano_live)
             else:
-                st.success(f"✅ `{ip_sandbox}` passes all IEC 60034-5 / IEC 60529 validation layers.")
+                st.success(f"`{ip_sandbox}` passes all IEC 60034-5 / IEC 60529 validation layers.")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
