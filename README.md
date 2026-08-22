@@ -153,7 +153,3 @@ The current version operates on simulated conflict data. The following capabilit
 ```
 
 ---
-
-## License
-
-MIT
