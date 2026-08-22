@@ -1,83 +1,159 @@
-# Forensic Data Agent 🕵️‍♂️ (UniHack 2026)
+# Forensic Data Agent
 
-**"Probabilistic Extraction at the Edge, Deterministic Verification at the Core."**
-
-## The Problem
-In industrial supply chains, product data is a mess. When procuring an industrial motor, a company might get three different voltage specifications from three different sources: an outdated internal ERP database, a supplier catalog, and a manufacturer's PDF. 
-
-Most software forces human engineers to manually hunt down the truth, which takes hours. If they guess wrong, expensive equipment blows up. If they use a standard AI to summarize it, the AI just guesses the most common number—which is dangerous.
-
-## The Solution
-We built the **Forensic Data Agent** — a system that doesn't just extract data, it mathematically PROVES which data is correct. It ingests conflicting claims, normalizes them, and runs hard engineering physics rules (e.g., checking if `Volts × Amps = Watts`) to definitively prove which data point is a typo, and which is reality.
+A deterministic, multi-pass data verification pipeline for industrial product intelligence. Resolves conflicting specifications from heterogeneous sources using physics invariants, unit standardization, and weighted evidence scoring.
 
 ---
 
-## 🏗️ The 4-Pass Architecture
+## Problem Statement
 
-1. **Input Layer (Evidence Graph):** Ingests conflicting claims from multiple sources without overwriting any data. Preserves a perfect audit trail of every claim, its source, timestamp, and confidence.
-2. **Pass 1 - Unit Normalizer:** Converts raw values (e.g., lbs to kg) strictly following NIST SP 811 scientific precision rules.
-3. **Pass 2 - Physics Rule Engine:** Cross-checks claims against physical reality (e.g., mathematically verifying if Watts, Volts, and Amps align using IEC formulas; checking if IP ratings match enclosure types).
-4. **Pass 3 - Conflict Resolver:** Weighs sources mathematically (`Score = 40% Authority + 30% Confidence + 15% Recency + 15% Physics Bonus`) to output the absolute canonical truth with a full audit log.
+Industrial procurement depends on accurate product specifications. In practice, the same product attribute — voltage rating, enclosure class, power output — often returns different values depending on the source consulted: internal ERP records, supplier catalogs, and manufacturer documentation routinely conflict.
 
----
-
-## 🔮 Future Development: Live Data Ingestion
-
-While the current MVP runs on simulated supply chain conflicts, our immediate roadmap integrates a live intelligence pipeline:
-- **Jina Reader API:** A user inputs a live product URL, and the agent uses `r.jina.ai` to bypass complex HTML and extract clean Markdown.
-- **Gemini LLM Extraction:** The clean Markdown is fed to Google's Gemini API to intelligently extract structured specs.
-- **Live ERP Simulation:** The live web specs are instantly cross-referenced against a legacy SQLite ERP database to dynamically resolve real-world conflicts on the fly.
-- **Freemium Limits:** A built-in monetization model that tracks extraction usage and prompts users to upgrade to premium after a set number of scrapes.
+Manual reconciliation is slow, error-prone, and does not scale. Probabilistic AI summarization is unreliable for safety-critical data. The Forensic Data Agent solves this with a deterministic, explainable, and auditable resolution engine.
 
 ---
 
-## 🚀 Quickstart Guide
+## Architecture Overview
 
-### 1. Setup the Environment
-Open a terminal in the project directory and run:
+The pipeline processes all ingested claims through four sequential passes:
 
-**Windows:**
-```cmd
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Data Sources                             │
+│       PDF Datasheets │ ERP Databases │ Live Web Scrapes         │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Pass 1: Evidence Graph                        │
+│  Ingests all conflicting claims without overwriting.            │
+│  Preserves source, authority, confidence, and timestamp.        │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Pass 2: Unit Normalizer                       │
+│  Converts all values to SI units.                               │
+│  Enforces NIST SP 811 significant-figure precision rules.       │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                 Pass 3: Physics Rule Engine                      │
+│  Validates claims against IEC engineering standards.            │
+│  Flags contradictions (e.g., P ≠ √3·V·I·PF·η) as violations.  │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  Pass 4: Conflict Resolver                       │
+│  Scores each claim:                                             │
+│    Authority 40% · Confidence 30% · Recency 15% · Physics 15%  │
+│  Outputs the canonical value with a full, written audit log.    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Key Differentiators
+
+| Capability | Standard AI Extraction | Forensic Data Agent |
+|---|---|---|
+| Source handling | Last-write wins | Full evidence graph preserved |
+| Unit conversion | Approximate | NIST SP 811 strict precision |
+| Validation | None | IEC physics invariant checks |
+| Conflict resolution | Probabilistic | Deterministic, weighted scoring |
+| Explainability | Black box | Complete audit log per decision |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.10 or higher
+- `pip` package manager
+
+### Installation
+
+Clone the repository and set up a virtual environment:
+
+```bash
+# Windows
 python -m venv .venv
 .venv\Scripts\activate
-pip install -r requirements.txt
-```
 
-**Mac / Linux:**
-```bash
+# macOS / Linux
 python3 -m venv .venv
 source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Launch the Dashboard
-With your virtual environment activated, start the Streamlit UI:
+### Running the Application
+
 ```bash
 streamlit run app.py
 ```
-Open the provided Local URL (usually `http://localhost:8501`) in your web browser.
+
+The dashboard will be available at `http://localhost:8501`.
+
+To run the core engine directly without the UI:
+
+```bash
+python engine.py
+```
 
 ---
 
-## 🧪 Usage Examples
+## Demonstration Scenarios
 
-The Streamlit UI includes sample profiles to demonstrate the validation pipeline.
+The dashboard ships with two pre-loaded conflict scenarios.
 
-### Case 1: The Power Conflict
-*Demonstrates physics invariant checking across data sources.*
-1. Select **Scenario 1 — Power Conflict** from the sidebar and click **Run Full Analysis**.
-2. **Observation:** The system ingests conflicting voltages (400V, 415V, 380V). An `[ELEC-001]` critical violation is raised because the 380V claim physically violates the three-phase power formula. The system resolves the conflict by scoring the remaining evidence.
+### Scenario 1 — Electrical Specification Conflict
 
-### Case 2: The Bad IP Code & Unit Trace
-*Demonstrates unit standardization and environmental contradiction logic.*
-1. Select **Scenario 2 — Environmental Conflict** from the sidebar and click **Run Full Analysis**.
-2. **Observation:** An `[ENV-001]` violation is raised because an open `IP23` rating is physically impossible on a Totally Enclosed (TEFC) motor. The system isolates the correct `IP55` rating.
+Three sources provide conflicting voltage ratings for the same motor: 400V (PDF manual), 415V (ERP database), and 380V (supplier website).
+
+The Physics Rule Engine validates each claim against the three-phase power formula. The 380V claim fails: it is mathematically inconsistent with the stated power output and current draw. The resolver scores the remaining claims and selects 400V from the PDF manual, which carries the highest authority weight and no physics penalties.
+
+**Anomaly raised:** `ELEC-001 — Three-Phase Power Invariant Violation`
+
+### Scenario 2 — Environmental Rating Conflict
+
+A supplier catalog specifies an `IP23` ingress protection rating. The motor is classified as Totally Enclosed Fan Cooled (TEFC). IP23 denotes an open, vented enclosure — a physical impossibility for a sealed motor.
+
+The rule engine flags the contradiction against IEC 60034-5 enclosure standards and isolates the correct `IP55` rating from a higher-authority source.
+
+**Anomaly raised:** `ENV-001 — IP Rating / Enclosure Type Contradiction`
 
 ---
 
-## 📂 Project Structure
+## Roadmap
 
-- `app.py` — Streamlit dashboard and UI.
-- `engine.py` — Core forensic validation and conflict resolution logic.
-- `mock_data.py` — Sample conflicting data profiles for MVP testing.
-- `requirements.txt` — Project dependencies.
+The current version operates on simulated conflict data. The following capabilities are in active development:
+
+- **Live Web Ingestion** — Integration with the Jina Reader API (`r.jina.ai`) to extract clean structured text from any live manufacturer URL.
+- **LLM-Assisted Extraction** — Google Gemini API integration to parse unstructured Markdown into validated specification schemas.
+- **Live ERP Cross-Reference** — Real-time conflict generation between scraped web data and internal SQLite ERP records.
+- **Freemium Access Tiers** — Session-based usage tracking with a defined free tier and a premium upgrade path for enterprise access.
+
+---
+
+## Project Structure
+
+```
+.
+├── app.py              # Streamlit dashboard and UI
+├── engine.py           # Core verification and resolution pipeline
+├── mock_data.py        # Conflict scenario data for MVP demonstration
+└── requirements.txt    # Python dependencies
+```
+
+---
+
+## License
+
+MIT
